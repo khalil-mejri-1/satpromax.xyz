@@ -67,11 +67,14 @@ export const ContentProvider = ({ children }) => {
     }
   }, [content]);
 
+  // API base URL from Vite environment variable or local default
+  const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+
   // Sync with Backend on mount if available
   useEffect(() => {
     const fetchRemoteContent = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/content');
+        const res = await fetch(`${API_BASE_URL}/api/content`);
         if (res.ok) {
           const remote = await res.json();
           if (remote && remote.data) {
@@ -83,7 +86,7 @@ export const ContentProvider = ({ children }) => {
       }
     };
     fetchRemoteContent();
-  }, []);
+  }, [API_BASE_URL]);
 
   // Update a specific section
   const updateSection = (sectionKey, newSectionData) => {
@@ -101,7 +104,7 @@ export const ContentProvider = ({ children }) => {
   const saveToServer = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/content', {
+      const res = await fetch(`${API_BASE_URL}/api/content`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),

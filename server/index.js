@@ -19,23 +19,43 @@ const MONGO_URI =
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB Atlas
+// Connect to MongoDB Atlas (Serverless cached connection for Vercel)
 let isConnected = false;
+let cachedPromise = null;
 
 const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(MONGO_URI, {
-      dbName: process.env.DB_NAME || 'vetrine',
-    });
+  if (mongoose.connection.readyState === 1) {
     isConnected = true;
-    console.log(`✅ MongoDB Atlas Connected Successfully: ${conn.connection.host}`);
-    console.log(`📂 Database / Table Name: vetrine`);
-  } catch (error) {
-    isConnected = false;
-    console.error('❌ MongoDB Connection Error:', error.message);
-    console.log('💡 Note: Make sure your IP address is whitelisted in MongoDB Atlas Network Access (0.0.0.0/0).');
+    return;
   }
+  if (!cachedPromise) {
+    cachedPromise = mongoose.connect(MONGO_URI, {
+      dbName: process.env.DB_NAME || 'vetrine',
+    }).then((conn) => {
+      isConnected = true;
+      console.log(`✅ MongoDB Atlas Connected Successfully: ${conn.connection.host}`);
+      return conn;
+    }).catch((error) => {
+      cachedPromise = null;
+      isConnected = false;
+      console.error('❌ MongoDB Connection Error:', error.message);
+      throw error;
+    });
+  }
+  await cachedPromise;
 };
+
+// Middleware to ensure database connection before processing API requests on Vercel
+app.use(async (req, res, next) => {
+  if (MONGO_URI && mongoose.connection.readyState !== 1) {
+    try {
+      await connectDB();
+    } catch (err) {
+      // Continue and let individual route error handlers manage failure if any
+    }
+  }
+  next();
+});
 
 connectDB();
 
@@ -164,9 +184,13 @@ app.post('/api/content', async (req, res) => {
   }
 });
 
-// Start Express Server
-app.listen(PORT, () => {
-  console.log('==============================================');
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log('==============================================');
-});
+// Start Express Server locally (Vercel manages execution in serverless mode)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log('==============================================');
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log('==============================================');
+  });
+}
+
+export default app;
