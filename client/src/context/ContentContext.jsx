@@ -68,7 +68,7 @@ export const ContentProvider = ({ children }) => {
   }, [content]);
 
   // API base URL from Vite environment variable or local default
-  const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+  const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://satpromax-xyz.vercel.app').replace(/\/+$/, '');
 
   // Sync with Backend on mount if available
   useEffect(() => {
