@@ -6,8 +6,6 @@ export const Modals = ({
   onCloseOrderModal,
   channelExplorerOpen,
   onCloseChannelExplorer,
-  vodPlayerData,
-  onCloseVodPlayer,
   currentCurrency = 'USD',
 }) => {
   // Order Modal State
@@ -300,91 +298,6 @@ export const Modals = ({
         </div>
       )}
 
-      {/* 3. VOD MOVIE / SERIES TRAILER PREVIEW MODAL */}
-      {vodPlayerData && (
-        <div className="modal-backdrop-fixed" onClick={onCloseVodPlayer}>
-          <div className="modal-card-dialog modal-vod-dialog animate-scale-up" onClick={(e) => e.stopPropagation()}>
-            <button 
-              type="button" 
-              className="btn-modal-close" 
-              onClick={onCloseVodPlayer}
-              aria-label="Close modal"
-            >
-              <IconClose size={20} />
-            </button>
-
-            <div className="vod-player-mockup-box">
-              {/* Simulated High-Res Video Screen */}
-              <div className="simulated-video-player">
-                <img 
-                  src={vodPlayerData.cover} 
-                  alt={vodPlayerData.title} 
-                  className="player-bg-poster"
-                />
-                <div className="video-player-overlay">
-                  <div className="player-top-bar">
-                    <span className="player-vod-tag">{vodPlayerData.platform} • {vodPlayerData.quality}</span>
-                    <span className="player-live-res">4K UHD | Dolby Atmos 5.1</span>
-                  </div>
-
-                  <div className="player-center-play">
-                    <div className="pulsing-play-circle">
-                      <IconPlayCircle size={64} />
-                    </div>
-                  </div>
-
-                  <div className="player-controls-bar">
-                    <div className="progress-bar-line">
-                      <div className="progress-fill" style={{ width: '45%' }}></div>
-                    </div>
-                    <div className="controls-meta-row">
-                      <span>01:14:20 / 02:30:00</span>
-                      <span>HD Audio English [5.1] | Multi-Subtitles</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Video Info Details */}
-              <div className="vod-player-details">
-                <div className="vod-details-header">
-                  <div>
-                    <h3 className="vod-detail-title">{vodPlayerData.title}</h3>
-                    <div className="vod-tags-row">
-                      <span className="tag-chip"><IconStar size={13} /> {vodPlayerData.rating}</span>
-                      <span className="tag-chip">{vodPlayerData.year}</span>
-                      <span className="tag-chip">{vodPlayerData.genre}</span>
-                      <span className="tag-chip quality-chip">{vodPlayerData.quality}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="vod-detail-synopsis">{vodPlayerData.description}</p>
-
-                <div className="vod-cta-actions">
-                  <button 
-                    type="button" 
-                    className="btn-hero-subscribe"
-                    onClick={() => {
-                      onCloseVodPlayer();
-                      // open checkout
-                    }}
-                  >
-                    Stream Full Movie in 4K Now
-                  </button>
-                  <button 
-                    type="button" 
-                    className="btn-hero-plans"
-                    onClick={onCloseVodPlayer}
-                  >
-                    Close Preview
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

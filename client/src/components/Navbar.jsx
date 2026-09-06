@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useContent } from '../context/ContentContext';
-import { IconTv, IconTag, IconMonitor, IconHeadphones, IconChevronDown, IconPlay, IconMenu, IconClose } from './Icons';
+import { IconTv, IconTag, IconMonitor, IconHeadphones, IconChevronDown, IconPlay, IconMenu, IconClose, IconDownload } from './Icons';
 
 export const Navbar = ({ onOpenOrderModal, currentLang, setLang, currentCurrency, setCurrency }) => {
   const { content, isAdmin, setActiveEditingSection } = useContent();
@@ -56,6 +56,10 @@ export const Navbar = ({ onOpenOrderModal, currentLang, setLang, currentCurrency
           <a href="#install" className="nav-link">
             <IconMonitor size={16} className="nav-link-icon" />
             <span>{navData.linkInstall || 'How To Install'}</span>
+          </a>
+          <a href="/download-apps" target="_blank" rel="noopener noreferrer" className="nav-link nav-link-apps-highlight">
+            <IconDownload size={16} className="nav-link-icon" />
+            <span>{navData.linkApps || 'Download Apps'}</span>
           </a>
           <a href="#footer" className="nav-link">
             <IconHeadphones size={16} className="nav-link-icon" />
@@ -133,6 +137,10 @@ export const Navbar = ({ onOpenOrderModal, currentLang, setLang, currentCurrency
           <a href="#install" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             <IconMonitor size={18} />
             <span>{navData.linkInstall || 'How To Install'}</span>
+          </a>
+          <a href="/download-apps" target="_blank" rel="noopener noreferrer" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+            <IconDownload size={18} />
+            <span>{navData.linkApps || 'Download Apps'}</span>
           </a>
           <a href="#footer" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             <IconHeadphones size={18} />

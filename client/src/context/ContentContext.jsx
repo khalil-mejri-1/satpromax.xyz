@@ -43,6 +43,99 @@ export const ContentProvider = ({ children }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveNotification, setSaveNotification] = useState(null);
 
+  // 5. Professional Confirmation & Prompt Dialog State
+  const [confirmModal, setConfirmModal] = useState(null);
+
+  const closeConfirmModal = () => {
+    setConfirmModal(null);
+  };
+
+  const showConfirm = ({
+    title = 'Confirmation',
+    message = '',
+    details = null,
+    type = 'danger', // 'danger' | 'warning' | 'info'
+    confirmText = 'Confirmer',
+    cancelText = 'Annuler',
+    onConfirm = () => {},
+    onCancel = () => {},
+  }) => {
+    setConfirmModal({
+      isOpen: true,
+      type,
+      title,
+      message,
+      details,
+      confirmText,
+      cancelText,
+      onConfirm: async () => {
+        try {
+          await onConfirm();
+        } finally {
+          setConfirmModal(null);
+        }
+      },
+      onCancel: () => {
+        if (onCancel) onCancel();
+        setConfirmModal(null);
+      },
+    });
+  };
+
+  const showPrompt = ({
+    title = 'Saisie requise',
+    message = '',
+    fields = [],
+    confirmText = 'Enregistrer',
+    cancelText = 'Annuler',
+    onConfirm = () => {},
+    onCancel = () => {},
+  }) => {
+    setConfirmModal({
+      isOpen: true,
+      type: 'prompt',
+      title,
+      message,
+      fields,
+      confirmText,
+      cancelText,
+      onConfirm: async (values) => {
+        try {
+          await onConfirm(values);
+        } finally {
+          setConfirmModal(null);
+        }
+      },
+      onCancel: () => {
+        if (onCancel) onCancel();
+        setConfirmModal(null);
+      },
+    });
+  };
+
+  const showAlertModal = ({
+    title = 'Information',
+    message = '',
+    details = null,
+    confirmText = 'Compris',
+    type = 'info',
+    onClose = () => {},
+  }) => {
+    setConfirmModal({
+      isOpen: true,
+      type,
+      title,
+      message,
+      details,
+      confirmText,
+      cancelText: null,
+      onConfirm: () => {
+        if (onClose) onClose();
+        setConfirmModal(null);
+      },
+    });
+  };
+
   // Listen for browser popstate and URL changes (e.g. /admin)
   useEffect(() => {
     const handleLocationCheck = () => {
@@ -123,11 +216,18 @@ export const ContentProvider = ({ children }) => {
 
   // Reset to original default content
   const resetToDefault = () => {
-    if (window.confirm('هل أنت متأكد من رغبتك في استعادة النصوص والتصميم الأصلي لجميع الأقسام؟')) {
-      setContent(defaultContent);
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-      triggerNotification('🔄 تم استعادة المحتوى الأصلي للموقع بنجاح');
-    }
+    showConfirm({
+      type: 'warning',
+      title: 'Réinitialiser tout le contenu ?',
+      message: 'Êtes-vous sûr de vouloir restaurer les textes, images et réglages par défaut de tous les blocs ? Toutes les modifications non enregistrées seront annulées.',
+      confirmText: 'Oui, réinitialiser tout',
+      cancelText: 'Annuler',
+      onConfirm: () => {
+        setContent(defaultContent);
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        triggerNotification('🔄 تم استعادة المحتوى الأصلي للموقع بنجاح');
+      }
+    });
   };
 
   // Admin login handler (checks admin@gmail.com / 123456)
@@ -195,6 +295,11 @@ export const ContentProvider = ({ children }) => {
         setActiveEditingSection,
         isSaving,
         saveNotification,
+        confirmModal,
+        showConfirm,
+        showPrompt,
+        showAlertModal,
+        closeConfirmModal,
       }}
     >
       {children}
