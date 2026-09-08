@@ -9,7 +9,7 @@ import { SiteContent } from './models/SiteContent.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7000;
 
 // MongoDB Connection URI
 const MONGO_URI =
@@ -161,9 +161,9 @@ app.post('/api/content', async (req, res) => {
     }
 
     if (!isConnected) {
-      return res.status(503).json({ 
-        error: 'Database offline, content saved locally in client', 
-        savedLocally: true 
+      return res.status(503).json({
+        error: 'Database offline, content saved locally in client',
+        savedLocally: true
       });
     }
 
