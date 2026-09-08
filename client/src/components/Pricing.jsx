@@ -159,7 +159,7 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
 
           {/* Connection Selector Toggle */}
           <div className="connections-selector-box">
-            <span className="selector-label">Select Active Devices:</span>
+            <span className="selector-label">{pricingData.selectDevicesLabel || 'Select Active Devices:'}</span>
             <div className="connections-btn-group">
               <button 
                 type="button" 
@@ -226,12 +226,12 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
                     })}
                   >
                     <IconZap size={16} />
-                    <span>Order Now</span>
+                    <span>{pricingData.btnOrderNow || 'Order Now'}</span>
                   </button>
 
                   {/* Features List */}
                   <div className="card-features-list">
-                    <p className="features-title">What's included:</p>
+                    <p className="features-title">{pricingData.whatsIncluded || "What's included:"}</p>
                     {(plan.features || []).map((feat, i) => (
                       <div key={i} className="feature-row">
                         <span className="feature-check-icon">
@@ -245,7 +245,7 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
                   {/* Guarantee badge */}
                   <div className="card-footer-guarantee">
                     <IconShieldCheck size={14} />
-                    <span>7-Day Money Back Guarantee</span>
+                    <span>{pricingData.guaranteeBadge || '7-Day Money Back Guarantee'}</span>
                   </div>
                 </div>
               );
@@ -256,15 +256,15 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
           <div className="pricing-trust-bar">
             <div className="trust-item">
               <span className="trust-icon">⚡</span>
-              <span>Instant Automated Delivery (Within 2 Minutes)</span>
+              <span>{pricingData.trust1 || 'Instant Automated Delivery (Within 2 Minutes)'}</span>
             </div>
             <div className="trust-item">
               <span className="trust-icon">🔒</span>
-              <span>256-Bit SSL Encrypted & Secure Checkout</span>
+              <span>{pricingData.trust2 || '256-Bit SSL Encrypted & Secure Checkout'}</span>
             </div>
             <div className="trust-item">
               <span className="trust-icon">🛡️</span>
-              <span>100% Satisfaction or Full Refund</span>
+              <span>{pricingData.trust3 || '100% Satisfaction or Full Refund'}</span>
             </div>
           </div>
         </div>

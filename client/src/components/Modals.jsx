@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useContent } from '../context/ContentContext';
 import { IconClose, IconCheck, IconZap, IconShieldCheck, IconSearch, IconPlayCircle, IconStar, IconTv } from './Icons';
 
 export const Modals = ({
@@ -8,6 +9,9 @@ export const Modals = ({
   onCloseChannelExplorer,
   currentCurrency = 'USD',
 }) => {
+  const { content } = useContent();
+  const modalsData = content?.modals || {};
+
   // Order Modal State
   const [deviceType, setDeviceType] = useState('FireStick');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -17,7 +21,7 @@ export const Modals = ({
 
   // Channel Explorer State
   const [channelSearch, setChannelSearch] = useState('');
-  const [countryFilter, setCountryFilter] = useState('USA');
+  const [countryFilter, setCountryFilter] = useState('All');
 
   const fullChannelsList = [
     { country: 'USA', name: 'ESPN 4K Ultra HD', category: 'Sports', quality: '4K', status: 'Live' },
@@ -78,25 +82,25 @@ export const Modals = ({
             {!orderSuccess ? (
               <div className="order-form-container">
                 <div className="modal-header-box">
-                  <div className="modal-badge-pill">⚡ Instant Activation</div>
-                  <h3 className="modal-title">Complete Your Subscription</h3>
+                  <div className="modal-badge-pill">{modalsData.instantActivation || '⚡ Instant Activation'}</div>
+                  <h3 className="modal-title">{modalsData.orderTitle || 'Complete Your Subscription'}</h3>
                   <p className="modal-subtitle">
-                    Selected Package: <strong>{orderModalData.title || '12 Months Premium IPTV'}</strong>
+                    {modalsData.selectedPackage || 'Selected Package:'} <strong>{orderModalData.title || '12 Months Premium IPTV'}</strong>
                   </p>
                   {orderModalData.price && (
                     <div className="modal-price-tag">
-                      Total: <span>{orderModalData.price}</span>
+                      {modalsData.totalPrice || 'Total:'} <span>{orderModalData.price}</span>
                     </div>
                   )}
                 </div>
 
                 <form onSubmit={handleOrderSubmit} className="order-actual-form">
                   <div className="form-group">
-                    <label className="form-label">Email Address (for instant activation code & credentials):</label>
+                    <label className="form-label">{modalsData.emailLabel || 'Email Address (for instant activation code & credentials):'}</label>
                     <input 
                       type="email" 
                       required
-                      placeholder="name@example.com" 
+                      placeholder={modalsData.emailPlaceholder || 'name@example.com'}
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
                       className="form-input-control"
@@ -104,10 +108,10 @@ export const Modals = ({
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">WhatsApp Number (optional for priority support):</label>
+                    <label className="form-label">{modalsData.whatsappLabel || 'WhatsApp Number (optional for priority support):'}</label>
                     <input 
                       type="tel" 
-                      placeholder="+1 (555) 000-0000" 
+                      placeholder={modalsData.whatsappPlaceholder || '+1 (555) 000-0000'}
                       value={customerWhatsapp}
                       onChange={(e) => setCustomerWhatsapp(e.target.value)}
                       className="form-input-control"
@@ -115,7 +119,7 @@ export const Modals = ({
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Primary Device you will use:</label>
+                    <label className="form-label">{modalsData.deviceLabel || 'Primary Device you will use:'}</label>
                     <select 
                       value={deviceType}
                       onChange={(e) => setDeviceType(e.target.value)}
@@ -131,39 +135,39 @@ export const Modals = ({
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Select Payment Method:</label>
+                    <label className="form-label">{modalsData.paymentLabel || 'Select Payment Method:'}</label>
                     <div className="payment-options-grid">
                       <button 
                         type="button" 
                         className={`pay-opt-box ${selectedPayment === 'card' ? 'active' : ''}`}
                         onClick={() => setSelectedPayment('card')}
                       >
-                        <span>💳 Credit / Debit Card</span>
+                        <span>{modalsData.payCard || '💳 Credit / Debit Card'}</span>
                       </button>
                       <button 
                         type="button" 
                         className={`pay-opt-box ${selectedPayment === 'paypal' ? 'active' : ''}`}
                         onClick={() => setSelectedPayment('paypal')}
                       >
-                        <span>🅿️ PayPal</span>
+                        <span>{modalsData.payPaypal || '🅿️ PayPal'}</span>
                       </button>
                       <button 
                         type="button" 
                         className={`pay-opt-box ${selectedPayment === 'crypto' ? 'active' : ''}`}
                         onClick={() => setSelectedPayment('crypto')}
                       >
-                        <span>₿ Crypto (USDT / BTC)</span>
+                        <span>{modalsData.payCrypto || '₿ Crypto (USDT / BTC)'}</span>
                       </button>
                     </div>
                   </div>
 
                   <div className="order-security-row">
                     <IconShieldCheck size={16} />
-                    <span>256-Bit SSL Encrypted • 7-Day Money-Back Guarantee</span>
+                    <span>{modalsData.securityText || '256-Bit SSL Encrypted • 7-Day Money-Back Guarantee'}</span>
                   </div>
 
                   <button type="submit" className="btn-modal-checkout-submit">
-                    <span>Activate Subscription Now</span>
+                    <span>{modalsData.btnSubmitOrder || 'Activate Subscription Now'}</span>
                     <IconZap size={18} />
                   </button>
                 </form>
@@ -173,31 +177,31 @@ export const Modals = ({
                 <div className="success-icon-bubble">
                   <IconCheck size={36} />
                 </div>
-                <h3>Subscription Order Initiated!</h3>
+                <h3>{modalsData.successTitle || 'Subscription Order Initiated!'}</h3>
                 <p>
-                  Thank you! An activation confirmation along with your M3U & Xtream Codes login credentials has been sent to <strong>{customerEmail}</strong>.
+                  {modalsData.successDesc || 'Thank you! An activation confirmation along with your credentials has been sent to'} <strong>{customerEmail}</strong>.
                 </p>
                 <div className="credentials-preview-box">
-                  <div className="cred-line"><strong>Server URL:</strong> http://line.ipplaytv.me:8080</div>
-                  <div className="cred-line"><strong>Status:</strong> Active (24/7 VIP Line)</div>
-                  <div className="cred-line"><strong>Setup Guide:</strong> Sent to email for {deviceType}</div>
+                  <div className="cred-line"><strong>{modalsData.serverUrlLabel || 'Server URL:'}</strong> http://line.satpromax.me</div>
+                  <div className="cred-line"><strong>{modalsData.statusLabel || 'Status:'}</strong> {modalsData.statusActive || 'Active (24/7 VIP Line)'}</div>
+                  <div className="cred-line"><strong>{modalsData.setupGuideLabel || 'Setup Guide:'}</strong> Sent for {deviceType}</div>
                 </div>
 
                 <div className="success-actions-row">
                   <a 
-                    href={`https://wa.me/?text=Hello%20IPPLAY%20TV,%20I%20just%20placed%20order%20for%20email%20${encodeURIComponent(customerEmail)}`}
+                    href={`https://wa.me/?text=Hello%20SatProMax,%20I%20just%20placed%20order%20for%20email%20${encodeURIComponent(customerEmail)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-whatsapp-confirm"
                   >
-                    Confirm via WhatsApp Instant Chat
+                    {modalsData.btnWhatsappConfirm || 'Confirm via WhatsApp Instant Chat'}
                   </a>
                   <button 
                     type="button" 
                     className="btn-close-success"
                     onClick={onCloseOrderModal}
                   >
-                    Done
+                    {modalsData.btnDone || 'Done'}
                   </button>
                 </div>
               </div>
@@ -220,9 +224,9 @@ export const Modals = ({
             </button>
 
             <div className="explorer-header">
-              <div className="pill-badge-gradient">19,000+ Channels Live</div>
-              <h3>Explore Global TV Channels</h3>
-              <p>Browse live TV feeds, sports broadcast channels, and pay-per-view events.</p>
+              <div className="pill-badge-gradient">{modalsData.explorerBadge || '19,000+ Channels Live'}</div>
+              <h3>{modalsData.explorerTitle || 'Explore Global TV Channels'}</h3>
+              <p>{modalsData.explorerSubtitle || 'Browse live TV feeds, sports broadcast channels, and pay-per-view events.'}</p>
             </div>
 
             {/* Filter controls */}
@@ -244,7 +248,7 @@ export const Modals = ({
                 <IconSearch size={16} />
                 <input 
                   type="text"
-                  placeholder="Search channel by name or league..."
+                  placeholder={modalsData.explorerSearchPlaceholder || 'Search channel by name or league...'}
                   value={channelSearch}
                   onChange={(e) => setChannelSearch(e.target.value)}
                   className="channel-search-input"
@@ -257,11 +261,11 @@ export const Modals = ({
               <table className="channels-interactive-table">
                 <thead>
                   <tr>
-                    <th>Channel Name</th>
-                    <th>Country / Region</th>
-                    <th>Category</th>
-                    <th>Broadcast Quality</th>
-                    <th>Server Status</th>
+                    <th>{modalsData.thChannel || 'Channel Name'}</th>
+                    <th>{modalsData.thCountry || 'Country / Region'}</th>
+                    <th>{modalsData.thCategory || 'Category'}</th>
+                    <th>{modalsData.thQuality || 'Broadcast Quality'}</th>
+                    <th>{modalsData.thStatus || 'Server Status'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -282,7 +286,7 @@ export const Modals = ({
             </div>
 
             <div className="explorer-footer">
-              <span>Showing sample of 19,000+ channels. Full updated playlist delivered upon activation.</span>
+              <span>{modalsData.explorerFooter || 'Showing sample of 19,000+ channels. Full updated playlist delivered upon activation.'}</span>
               <button 
                 type="button" 
                 className="btn-modal-checkout-submit"
@@ -291,7 +295,7 @@ export const Modals = ({
                   onCloseOrderModal();
                 }}
               >
-                Subscribe to Access All Channels
+                {modalsData.btnSubscribeExplore || 'Subscribe to Access All Channels'}
               </button>
             </div>
           </div>

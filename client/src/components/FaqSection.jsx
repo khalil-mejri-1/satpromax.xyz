@@ -36,7 +36,9 @@ export const FaqSection = ({ onOpenOrderModal }) => {
     },
   ];
 
-  const faqs = faqData.items && faqData.items.length > 0 ? faqData.items : defaultFaqs;
+  const faqs = (faqData.defaultItems && faqData.defaultItems.length > 0) 
+    ? faqData.defaultItems 
+    : (faqData.items && faqData.items.length > 0 ? faqData.items : defaultFaqs);
 
   return (
     <AdminEditWrapper sectionKey="faq" sectionTitle="الأسئلة الشائعة والدعم (FAQ)">

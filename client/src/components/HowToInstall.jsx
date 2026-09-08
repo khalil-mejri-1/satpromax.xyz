@@ -54,7 +54,9 @@ export const HowToInstall = ({ onOpenOrderModal }) => {
     },
   ];
 
-  const apps = installData.apps && installData.apps.length > 0 ? installData.apps : defaultApps;
+  const apps = (installData.defaultApps && installData.defaultApps.length > 0)
+    ? installData.defaultApps
+    : (installData.apps && installData.apps.length > 0 ? installData.apps : defaultApps);
   const [selectedApp, setSelectedApp] = useState(apps[0]?.id || 'smarters');
 
   const currentApp = apps.find(a => (a.id === selectedApp || a.name === selectedApp)) || apps[0] || defaultApps[0];
@@ -93,12 +95,12 @@ export const HowToInstall = ({ onOpenOrderModal }) => {
           <div className="install-guide-card">
             <div className="guide-card-header">
               <div className="guide-title-box">
-                <h3>Setup Guide for {currentApp.name}</h3>
-                <span className="supported-devices-tag">Supported on: {currentApp.devices}</span>
+                <h3>{installData.setupGuidePrefix || 'Setup Guide for'} {currentApp.name}</h3>
+                <span className="supported-devices-tag">{installData.supportedOnLabel || installData.devicesLabel || 'Supported on:'} {currentApp.devices}</span>
               </div>
               <div className="activation-badge">
                 <span className="pulsing-green-dot"></span>
-                <span>Instant Activation</span>
+                <span>{installData.instantActivation || 'Instant Activation'}</span>
               </div>
             </div>
 
@@ -109,7 +111,7 @@ export const HowToInstall = ({ onOpenOrderModal }) => {
                     <span>{idx + 1}</span>
                   </div>
                   <div className="step-body">
-                    <h4>Step {idx + 1}</h4>
+                    <h4>{installData.stepWord || 'Step'} {idx + 1}</h4>
                     <p>{step}</p>
                   </div>
                 </div>
@@ -118,7 +120,7 @@ export const HowToInstall = ({ onOpenOrderModal }) => {
 
             <div className="guide-footer-action">
               <div className="help-text">
-                <strong>Need personal assistance?</strong> Our 24/7 technical team is available on WhatsApp to guide you step-by-step.
+                <strong>{installData.needHelpTitle || 'Need personal assistance?'}</strong> {installData.needHelpDesc || 'Our 24/7 technical team is available on WhatsApp to guide you step-by-step.'}
               </div>
               <button 
                 type="button" 

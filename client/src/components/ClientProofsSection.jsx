@@ -7,9 +7,11 @@ export const ClientProofsSection = () => {
   const { content } = useContent();
   const proofsData = content?.clientProofs || {};
 
-  const items = proofsData.items && proofsData.items.length > 0
-    ? proofsData.items
-    : [
+  const items = (proofsData.defaultItems && proofsData.defaultItems.length > 0)
+    ? proofsData.defaultItems
+    : (proofsData.items && proofsData.items.length > 0
+      ? proofsData.items
+      : [
         {
           id: 1,
           title: "+1 (780) 456-xxxx",
@@ -70,7 +72,7 @@ export const ClientProofsSection = () => {
             { sender: 'them', text: 'Merci pour votre confiance !', time: '8:51 PM', status: 'read' },
           ],
         },
-      ];
+      ]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -184,7 +186,7 @@ export const ClientProofsSection = () => {
                               </div>
                               <div className="wa-contact-meta">
                                 <span className="wa-contact-name">{item.title || item.clientPhone}</span>
-                                <span className="wa-contact-status">online</span>
+                                <span className="wa-contact-status">{proofsData.onlineStatus || 'online'}</span>
                               </div>
                             </div>
                             <div className="wa-top-icons">
@@ -197,7 +199,7 @@ export const ClientProofsSection = () => {
                           {/* WhatsApp Chat Wallpaper & Messages List */}
                           <div className="wa-messages-scroller">
                             <div className="wa-encryption-pill">
-                              🔒 Messages and calls are end-to-end encrypted. No one outside of this chat can read or listen to them.
+                              {proofsData.encryptedNotice || '🔒 Messages and calls are end-to-end encrypted. No one outside of this chat can read or listen to them.'}
                             </div>
 
                             {(item.messages || []).map((msg, mIdx) => (
@@ -225,7 +227,7 @@ export const ClientProofsSection = () => {
                           <div className="wa-input-bottom-bar">
                             <div className="wa-input-pill">
                               <span className="wa-input-icon">😊</span>
-                              <span className="wa-input-placeholder">Type a message</span>
+                              <span className="wa-input-placeholder">{proofsData.typeMessagePlaceholder || 'Type a message'}</span>
                               <span className="wa-input-icon">📎</span>
                             </div>
                             <div className="wa-mic-btn">

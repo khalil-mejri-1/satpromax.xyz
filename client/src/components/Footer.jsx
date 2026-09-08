@@ -15,14 +15,9 @@ export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
           <div className="footer-grid">
             {/* Col 1: Brand & Bio */}
             <div className="footer-brand-col">
-              <div className="footer-logo-wrapper">
-                <span className="logo-text-ip">{content?.navbar?.logoIp || 'IP'}</span>
-                <div className="logo-tv-box">
-                  <IconTv size={20} className="logo-tv-svg" />
-                </div>
-                <span className="logo-text-tv">{content?.navbar?.logoTv || 'TV'}</span>
-                <span className="logo-sub">{content?.navbar?.logoPlay || 'PLAY'}</span>
-              </div>
+              <a href="#" className="footer-logo-link" aria-label="SatProMax Home">
+                <img src="/satpromax-logo.png" alt="SatProMax Logo" className="site-footer-logo-img" />
+              </a>
               <p className="footer-brand-desc">
                 {footerData.brandDesc || "The world's leading premium IPTV provider delivering 19,000+ live HD/4K TV channels and 56,000+ VOD movies & series with zero freezing and 99.9% guaranteed server uptime."}
               </p>
@@ -38,33 +33,33 @@ export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
 
             {/* Col 2: Quick Links */}
             <div className="footer-nav-col">
-              <h4 className="footer-col-title">Navigation</h4>
+              <h4 className="footer-col-title">{footerData.navColTitle || 'Navigation'}</h4>
               <ul className="footer-links-list">
-                <li><a href="#pricing">Pricing Plans</a></li>
-                <li><a href="#channels">Live Channels List</a></li>
-                <li><a href="#vod">Movies & TV Series VOD</a></li>
-                <li><a href="#devices">Supported Devices</a></li>
-                <li><a href="#install">Installation Guides</a></li>
-                <li><a href="#contact">Contact & FAQ</a></li>
+                <li><a href="#pricing">{footerData.navPricing || 'Pricing Plans'}</a></li>
+                <li><a href="#channels">{footerData.navChannels || 'Live Channels List'}</a></li>
+                <li><a href="#vod">{footerData.navVod || 'Movies & TV Series VOD'}</a></li>
+                <li><a href="#devices">{footerData.navDevices || 'Supported Devices'}</a></li>
+                <li><a href="#install">{footerData.navInstall || 'Installation Guides'}</a></li>
+                <li><a href="#contact">{footerData.navContact || 'Contact & FAQ'}</a></li>
               </ul>
             </div>
 
             {/* Col 3: Popular Channels & Sports */}
             <div className="footer-nav-col">
-              <h4 className="footer-col-title">Top Packages</h4>
+              <h4 className="footer-col-title">{footerData.packagesColTitle || 'Top Packages'}</h4>
               <ul className="footer-links-list">
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>beIN Sports & UEFA Pass</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>USA & UK Entertainment</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>4K Cinema & HBO VOD</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>PPV Boxing & UFC Events</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>Arabic & European Feeds</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>Kids & Family Channels</a></li>
+                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgBein || 'beIN Sports & UEFA Pass'}</a></li>
+                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgUsaUk || 'USA & UK Entertainment'}</a></li>
+                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgCinema || '4K Cinema & HBO VOD'}</a></li>
+                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgPpv || 'PPV Boxing & UFC Events'}</a></li>
+                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgArabic || 'Arabic & European Feeds'}</a></li>
+                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgKids || 'Kids & Family Channels'}</a></li>
               </ul>
             </div>
 
             {/* Col 4: Safe Payment & Guarantee */}
             <div className="footer-nav-col">
-              <h4 className="footer-col-title">Guaranteed & Secure</h4>
+              <h4 className="footer-col-title">{footerData.secureColTitle || 'Guaranteed & Secure'}</h4>
               <div className="guarantee-box-mini">
                 <div className="g-icon">🛡️</div>
                 <div>
@@ -86,22 +81,22 @@ export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
           {/* Bottom copyright line */}
           <div className="footer-bottom-bar">
             <p className="copyright-text">
-              {footerData.copyrightText || `© ${new Date().getFullYear()} IPPLAY TV. All rights reserved. Premium IPTV & VOD Streaming Service.`}
+              {footerData.copyrightText || `© ${new Date().getFullYear()} SatProMax. All rights reserved. Premium IPTV & VOD Streaming Service.`}
             </p>
             <div className="footer-legal-links">
-              <a href="#terms">Terms of Service</a>
+              <a href="#terms">{footerData.termsLink || 'Terms of Service'}</a>
               <span className="dot-divider">•</span>
-              <a href="#privacy">Privacy Policy</a>
+              <a href="#privacy">{footerData.privacyLink || 'Privacy Policy'}</a>
               <span className="dot-divider">•</span>
-              <a href="#refund">Refund Policy</a>
+              <a href="#refund">{footerData.refundLink || 'Refund Policy'}</a>
               <span className="dot-divider">•</span>
               <button 
                 type="button" 
                 className="btn-admin-portal-link"
                 onClick={openAdminLogin}
-                title="Accéder au panneau d'administration"
+                title={isAdmin ? (footerData.adminActiveBtn || 'Admin Mode Active') : (footerData.adminBtn || 'Admin Portal')}
               >
-                👑 {isAdmin ? 'Mode Admin Activé' : 'Portail Admin (/admin/)'}
+                👑 {isAdmin ? (footerData.adminActiveBtn || 'Admin Mode Active') : (footerData.adminBtn || 'Admin Portal (/admin/)')}
               </button>
             </div>
           </div>

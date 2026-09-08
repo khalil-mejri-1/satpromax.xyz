@@ -1,60 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useContent } from '../context/ContentContext';
 import { AdminEditWrapper } from './AdminEditWrapper';
-import { IconPlayCircle, IconCheck, IconTv, IconZap, IconShieldCheck, IconSparkles } from './Icons';
+import { IconCheck } from './Icons';
 
 export const Hero = ({ onOpenOrderModal, onExploreChannels }) => {
   const { content } = useContent();
   const heroData = content?.hero || {};
 
-  const [activeSlide, setActiveSlide] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef(null);
 
-  const heroShowcaseImages = [
-    {
-      id: 1,
-      title: heroData.showcaseCards?.[0]?.title || "The Most Dangerous Animal",
-      category: heroData.showcaseCards?.[0]?.subtitle || "True Crime Series",
-      badge: heroData.showcaseCards?.[0]?.quality || "4K HDR",
-      gradient: "linear-gradient(135deg, #1f1c2c, #928DAB)",
-      cover: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=500&auto=format&fit=crop&q=80",
-    },
-    {
-      id: 2,
-      title: heroData.showcaseCards?.[1]?.title || "FBI: Special Operations",
-      category: heroData.showcaseCards?.[1]?.subtitle || "Action / Drama",
-      badge: heroData.showcaseCards?.[1]?.quality || "LIVE NOW",
-      gradient: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
-      cover: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format&fit=crop&q=80",
-    },
-    {
-      id: 3,
-      title: heroData.showcaseCards?.[2]?.title || "The Good Place",
-      category: heroData.showcaseCards?.[2]?.subtitle || "Comedy / Fantasy",
-      badge: heroData.showcaseCards?.[2]?.quality || "Full Season",
-      gradient: "linear-gradient(135deg, #ff9966, #ff5e62)",
-      cover: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500&auto=format&fit=crop&q=80",
-    },
-    {
-      id: 4,
-      title: heroData.showcaseCards?.[3]?.title || "UEFA Champions League",
-      category: heroData.showcaseCards?.[3]?.subtitle || "Sports Live HD",
-      badge: heroData.showcaseCards?.[3]?.quality || "60 FPS 4K",
-      gradient: "linear-gradient(135deg, #11998e, #38ef7d)",
-      cover: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500&auto=format&fit=crop&q=80",
-    },
-  ];
+  const videoUrl = heroData.videoUrl || "https://video.wixstatic.com/video/efc10d_86cfb8f22c6e4f2ebcfef8215df8b72e/1080p/mp4/file.mp4";
+
+  const toggleSound = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % heroShowcaseImages.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [heroShowcaseImages.length]);
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Handled silently for browser autoplay restrictions
+      });
+    }
+  }, [videoUrl]);
 
   return (
     <AdminEditWrapper sectionKey="hero" sectionTitle="Section Hero">
       <section className="hero-section">
         {/* Ambient background glows */}
+        <div className="hero-glow-blob blob-yellow"></div>
         <div className="hero-glow-blob blob-purple"></div>
         <div className="hero-glow-blob blob-pink"></div>
         <div className="hero-glow-blob blob-blue"></div>
@@ -136,64 +113,41 @@ export const Hero = ({ onOpenOrderModal, onExploreChannels }) => {
               {/* Curved Screen Perspective Container */}
               <div className="curved-screen-wrapper">
                 <div className="curved-screen-inner">
-                  {/* 3D Visual Cards Track */}
-                  <div className="curved-cards-track">
-                    {/* Card 1: The Most Dangerous Animal */}
-                    <div className="curved-channel-card card-dangerous">
-                      <div className="card-overlay">
-                        <div className="card-top-info">
-                          <span className="channel-tag">{heroData.showcaseCards?.[0]?.tag || 'DOCU'}</span>
-                          <span className="quality-tag">{heroData.showcaseCards?.[0]?.quality || 'FHD'}</span>
-                        </div>
-                        <div className="card-bottom-info">
-                          <h4>{heroData.showcaseCards?.[0]?.title || 'The Most Dangerous Animal'}</h4>
-                          <p>{heroData.showcaseCards?.[0]?.subtitle || 'Stream Episode 1'}</p>
-                        </div>
-                      </div>
-                    </div>
+                  <video
+                    ref={videoRef}
+                    key={videoUrl}
+                    src={videoUrl}
+                    autoPlay
+                    loop
+                    muted={isMuted}
+                    playsInline
+                    preload="auto"
+                    className="showcase-video-element"
+                  />
+                  {/* Subtle glass reflection overlay */}
+                  <div className="screen-glass-glare"></div>
 
-                    {/* Card 2: FBI Special Ops */}
-                    <div className="curved-channel-card card-fbi">
-                      <div className="card-overlay">
-                        <div className="card-top-info">
-                          <span className="channel-tag">{heroData.showcaseCards?.[1]?.tag || 'SERIES'}</span>
-                          <span className="quality-tag">{heroData.showcaseCards?.[1]?.quality || '4K'}</span>
-                        </div>
-                        <div className="card-bottom-info">
-                          <h4>{heroData.showcaseCards?.[1]?.title || 'FBI'}</h4>
-                          <p>{heroData.showcaseCards?.[1]?.subtitle || 'Season 6 Live'}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Card 3: The Good Place */}
-                    <div className="curved-channel-card card-goodplace">
-                      <div className="card-overlay">
-                        <div className="card-top-info">
-                          <span className="channel-tag">{heroData.showcaseCards?.[2]?.tag || 'COMEDY'}</span>
-                          <span className="quality-tag">{heroData.showcaseCards?.[2]?.quality || '1080p'}</span>
-                        </div>
-                        <div className="card-bottom-info">
-                          <h4>{heroData.showcaseCards?.[2]?.title || 'The Good Place'}</h4>
-                          <p>{heroData.showcaseCards?.[2]?.subtitle || 'All Episodes VOD'}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Card 4: Live Sports */}
-                    <div className="curved-channel-card card-sports">
-                      <div className="card-overlay">
-                        <div className="card-top-info">
-                          <span className="channel-tag tag-sports">{heroData.showcaseCards?.[3]?.tag || 'sling'}</span>
-                          <span className="quality-tag">{heroData.showcaseCards?.[3]?.quality || '60FPS'}</span>
-                        </div>
-                        <div className="card-bottom-info">
-                          <h4>{heroData.showcaseCards?.[3]?.title || 'Live Sports PPV'}</h4>
-                          <p>{heroData.showcaseCards?.[3]?.subtitle || 'Real-Time Broadcast'}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Audio Mute/Unmute toggle */}
+                  <button 
+                    type="button" 
+                    className="showcase-sound-btn"
+                    onClick={toggleSound}
+                    title={isMuted ? "Activer le son" : "Couper le son"}
+                    aria-label={isMuted ? "Activer le son" : "Couper le son"}
+                  >
+                    {isMuted ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <line x1="23" y1="9" x2="17" y2="15"/>
+                        <line x1="17" y1="9" x2="23" y2="15"/>
+                      </svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                      </svg>
+                    )}
+                  </button>
                 </div>
               </div>
 

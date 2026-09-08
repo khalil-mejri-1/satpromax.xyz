@@ -462,15 +462,15 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
                     <div className="tv-menu-grid-mockup">
                       <div className="tv-menu-card-item live">
                         <IconTv size={24} />
-                        <span>LIVE TV</span>
+                        <span>{downloadAppsData.liveTvLabel || 'LIVE TV'}</span>
                       </div>
                       <div className="tv-menu-card-item movies">
                         <IconFilm size={24} />
-                        <span>MOVIES</span>
+                        <span>{downloadAppsData.moviesLabel || 'MOVIES'}</span>
                       </div>
                       <div className="tv-menu-card-item series">
                         <IconPlay size={24} />
-                        <span>SERIES</span>
+                        <span>{downloadAppsData.seriesLabel || 'SERIES'}</span>
                       </div>
                     </div>
                   </div>
@@ -479,10 +479,10 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
               </div>
 
               {/* Floating Pill Badges around TV */}
-              <div className="floating-tv-badge badge-top-left">⚡ 11K+ Live</div>
-              <div className="floating-tv-badge badge-top-right">4K ULTRA HD</div>
-              <div className="floating-tv-badge badge-bottom-left">VOD 121K+</div>
-              <div className="floating-tv-badge badge-bottom-right">Support 24/7</div>
+              <div className="floating-tv-badge badge-top-left">{downloadAppsData.badge1 || '⚡ 19K+ Live'}</div>
+              <div className="floating-tv-badge badge-top-right">{downloadAppsData.badge2 || '4K ULTRA HD'}</div>
+              <div className="floating-tv-badge badge-bottom-left">{downloadAppsData.badge3 || 'VOD 56K+'}</div>
+              <div className="floating-tv-badge badge-bottom-right">{downloadAppsData.badge4 || 'Support 24/7'}</div>
             </div>
 
           </div>
@@ -502,7 +502,7 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
           </div>
 
           <div className="easy-install-devices-row">
-            {(easyInstall.devices || []).map((dev, dIdx) => (
+            {(downloadAppsData.easyInstallDevices || easyInstall.devices || []).map((dev, dIdx) => (
               <div key={dev.id || dIdx} className="easy-install-card">
                 <div className="device-icon-box">
                   {dev.type === 'android' && <IconAndroid size={36} className="dev-svg android" />}
@@ -616,7 +616,7 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
 
                     {/* Downloader Code / Note */}
                     <span className="app-card-downloader-code">
-                      {app.downloaderCode || 'Disponible directement'}
+                      {app.downloaderCode || downloadAppsData.availableDirectly || 'Disponible directement'}
                     </span>
 
                     {/* Download Button */}
@@ -643,7 +643,7 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
                       }}
                     >
                       <IconDownload size={16} className="btn-dl-icon" />
-                      <span>{app.btnText || `Télécharger ${app.name}`}</span>
+                      <span>{app.btnText || downloadAppsData.downloadBtnText || `Télécharger ${app.name}`}</span>
                     </a>
                   </div>
                 ))}

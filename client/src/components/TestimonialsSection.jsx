@@ -7,9 +7,11 @@ export const TestimonialsSection = () => {
   const { content } = useContent();
   const testimonialsData = content?.testimonials || {};
 
-  const items = testimonialsData.items && testimonialsData.items.length > 0
-    ? testimonialsData.items
-    : [
+  const items = (testimonialsData.defaultItems && testimonialsData.defaultItems.length > 0)
+    ? testimonialsData.defaultItems
+    : (testimonialsData.items && testimonialsData.items.length > 0
+      ? testimonialsData.items
+      : [
         {
           id: 1,
           name: "Barbara Schaden",
@@ -50,7 +52,7 @@ export const TestimonialsSection = () => {
           rating: 5,
           text: "Switching to this IPTV was the best decision. Setup took less than 2 minutes on my FireStick. Highly recommended!",
         },
-      ];
+      ]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);

@@ -66,9 +66,11 @@ export const DevicesSupported = () => {
     },
   ];
 
-  const deviceCategories = devicesData.categories && devicesData.categories.length > 0 
-    ? devicesData.categories 
-    : defaultCategories;
+  const deviceCategories = (devicesData.defaultCategories && devicesData.defaultCategories.length > 0)
+    ? devicesData.defaultCategories
+    : (devicesData.categories && devicesData.categories.length > 0 
+      ? devicesData.categories 
+      : defaultCategories);
 
   const currentCategory = deviceCategories[activeTab] || deviceCategories[0] || defaultCategories[0];
 
@@ -121,21 +123,21 @@ export const DevicesSupported = () => {
                 <div className="device-features-highlights">
                   <div className="highlight-row">
                     <span className="h-check"><IconCheck size={14} /></span>
-                    <span>Setup Time: <strong>{currentCategory.setupTime}</strong></span>
+                    <span>{devicesData.setupTimeLabel || 'Setup Time:'} <strong>{currentCategory.setupTime}</strong></span>
                   </div>
                   <div className="highlight-row">
                     <span className="h-check"><IconCheck size={14} /></span>
-                    <span>Supports Xtream Codes API & M3U Playlist URLs</span>
+                    <span>{devicesData.featXtream || 'Supports Xtream Codes API & M3U Playlist URLs'}</span>
                   </div>
                   <div className="highlight-row">
                     <span className="h-check"><IconCheck size={14} /></span>
-                    <span>Full EPG Guide & Catch-up Included</span>
+                    <span>{devicesData.featEpg || 'Full EPG Guide & Catch-up Included'}</span>
                   </div>
                 </div>
               </div>
 
               <div className="detail-right-apps">
-                <h4 className="recommended-apps-title">Recommended Apps for this Device:</h4>
+                <h4 className="recommended-apps-title">{devicesData.recommendedAppsTitle || 'Recommended Apps for this Device:'}</h4>
                 <div className="app-chips-grid">
                   {(currentCategory.apps || []).map((app, i) => (
                     <div key={i} className="app-chip-item">
@@ -148,8 +150,8 @@ export const DevicesSupported = () => {
                 <div className="fast-setup-box">
                   <div className="fast-setup-icon">⚡</div>
                   <div>
-                    <strong>Instant Setup Instructions Provided</strong>
-                    <p>Step-by-step video & PDF guide sent to your email right after order.</p>
+                    <strong>{devicesData.fastSetupTitle || 'Instant Setup Instructions Provided'}</strong>
+                    <p>{devicesData.fastSetupDesc || 'Step-by-step video & PDF guide sent to your email right after order.'}</p>
                   </div>
                 </div>
               </div>

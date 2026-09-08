@@ -92,7 +92,7 @@ export const ChannelsSection = ({ onOpenChannelExplorer }) => {
               <IconSearch size={16} className="search-icon" />
               <input 
                 type="text"
-                placeholder="Search 19,000+ channels..."
+                placeholder={channelsData.searchPlaceholder || "Search 19,000+ channels..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="channel-search-input"

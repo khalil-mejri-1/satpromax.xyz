@@ -28,6 +28,7 @@ export const defaultContent = {
     perk3: "4K / FHD Streams",
     perk4: "24/7 VIP Support",
     liveBadge: "LIVE",
+    videoUrl: "https://video.wixstatic.com/video/efc10d_86cfb8f22c6e4f2ebcfef8215df8b72e/1080p/mp4/file.mp4",
     liveViewersText: "14,890+ Active Viewers Now",
     uptimeText: "99.9% Zero Buffering Uptime",
     showcaseCards: [

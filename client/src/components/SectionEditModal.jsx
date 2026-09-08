@@ -653,6 +653,48 @@ export const SectionEditModal = () => {
                   <input type="text" className="form-input-control" value={formData.perk4 || ''} onChange={(e) => handleFieldChange('perk4', e.target.value)} />
                 </div>
               </div>
+
+              <h4 className="editor-card-title">🎬 Écran Showcase & Vidéo Démo</h4>
+              <div className="form-group">
+                <label className="form-label">Lien / URL de la Vidéo (MP4) :</label>
+                <input 
+                  type="text" 
+                  className="form-input-control" 
+                  value={formData.videoUrl || ''} 
+                  placeholder="https://video.wixstatic.com/video/efc10d_86cfb8f22c6e4f2ebcfef8215df8b72e/1080p/mp4/file.mp4"
+                  onChange={(e) => handleFieldChange('videoUrl', e.target.value)} 
+                />
+              </div>
+
+              <div className="grid-3-cols">
+                <div className="form-group">
+                  <label className="form-label">Badge En Direct :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.liveBadge || ''} 
+                    onChange={(e) => handleFieldChange('liveBadge', e.target.value)} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Spectateurs Actifs (Texte) :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.liveViewersText || ''} 
+                    onChange={(e) => handleFieldChange('liveViewersText', e.target.value)} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Disponibilité / Uptime (Texte) :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.uptimeText || ''} 
+                    onChange={(e) => handleFieldChange('uptimeText', e.target.value)} 
+                  />
+                </div>
+              </div>
             </div>
           )}
 

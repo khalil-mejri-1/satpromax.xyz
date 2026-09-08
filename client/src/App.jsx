@@ -27,7 +27,6 @@ import './App.css';
 function App() {
   const { isAdmin, showAdminLogin, closeAdminLogin } = useContent();
 
-  const [currentLang, setLang] = useState('en');
   const [currentCurrency, setCurrency] = useState('USD');
   const [orderModalData, setOrderModalData] = useState(null);
   const [channelExplorerOpen, setChannelExplorerOpen] = useState(false);
@@ -92,10 +91,6 @@ function App() {
       {/* 1. Header & Navigation */}
       <Navbar 
         onOpenOrderModal={handleOpenOrderModal}
-        currentLang={currentLang}
-        setLang={setLang}
-        currentCurrency={currentCurrency}
-        setCurrency={setCurrency}
       />
 
       {/* Main Sections flow: Download Apps Page OR Home Landing Flow */}

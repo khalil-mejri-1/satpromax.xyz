@@ -51,8 +51,8 @@ export const FloatingWidgets = () => {
                   <span className="online-indicator"></span>
                 </div>
                 <div>
-                  <h5>IPPLAY TV Support</h5>
-                  <span className="online-status">Online • Typically replies instantly</span>
+                  <h5>{footerData.chatSupportTitle || 'SatProMax Support'}</h5>
+                  <span className="online-status">{footerData.chatOnlineStatus || 'Online • Typically replies instantly'}</span>
                 </div>
               </div>
               <button 
@@ -67,10 +67,10 @@ export const FloatingWidgets = () => {
 
             <div className="chat-body">
               <div className="chat-bubble received">
-                👋 Hello! Welcome to <strong>IPPLAY TV</strong>. How can we help you today?
+                {footerData.chatGreeting1 || '👋 Hello! Welcome to SatProMax. How can we help you today?'}
               </div>
               <div className="chat-bubble received">
-                ⚡ Would you like a <strong>Free Trial</strong> or help setting up on your FireStick / Smart TV?
+                {footerData.chatGreeting2 || '⚡ Would you like a Free Trial or help setting up on your FireStick / Smart TV?'}
               </div>
             </div>
 
@@ -82,7 +82,7 @@ export const FloatingWidgets = () => {
                 className="btn-start-whatsapp"
               >
                 <IconWhatsApp size={18} />
-                <span>Start WhatsApp Conversation</span>
+                <span>{footerData.chatStartBtn || 'Start WhatsApp Conversation'}</span>
               </a>
             </div>
           </div>
