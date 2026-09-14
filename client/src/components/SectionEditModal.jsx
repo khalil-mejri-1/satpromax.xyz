@@ -15,7 +15,7 @@ export const SectionEditModal = () => {
         setFormData(JSON.parse(JSON.stringify(content[activeEditingSection.key])));
       }
     }
-  }, [activeEditingSection, content]);
+  }, [activeEditingSection]);
 
   if (!activeEditingSection) return null;
 
@@ -480,10 +480,19 @@ export const SectionEditModal = () => {
                     onChange={(e) => handleFieldChange('logoTv', e.target.value)} 
                   />
                 </div>
+                <div className="form-group">
+                  <label className="form-label">Logo Texte 3 (PLAY) :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.logoPlay || ''} 
+                    onChange={(e) => handleFieldChange('logoPlay', e.target.value)} 
+                  />
+                </div>
               </div>
 
               <h4 className="editor-card-title">🔗 Liens de Navigation</h4>
-              <div className="grid-2-cols">
+              <div className="grid-3-cols">
                 <div className="form-group">
                   <label className="form-label">Lien Tarifs (Pricing) :</label>
                   <input 
@@ -500,6 +509,15 @@ export const SectionEditModal = () => {
                     className="form-input-control" 
                     value={formData.linkChannels || ''} 
                     onChange={(e) => handleFieldChange('linkChannels', e.target.value)} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Lien Télécharger Apps :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.linkApps || ''} 
+                    onChange={(e) => handleFieldChange('linkApps', e.target.value)} 
                   />
                 </div>
                 <div className="form-group">
@@ -571,7 +589,7 @@ export const SectionEditModal = () => {
                 />
               </div>
 
-              <div className="grid-2-cols">
+              <div className="grid-3-cols">
                 <div className="form-group">
                   <label className="form-label">Texte Dégradé Rouge (Channels) :</label>
                   <input 
@@ -579,6 +597,15 @@ export const SectionEditModal = () => {
                     className="form-input-control" 
                     value={formData.titleChannels || ''} 
                     onChange={(e) => handleFieldChange('titleChannels', e.target.value)} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Mot de Liaison (ex: and / et / و) :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.titleMiddle || ''} 
+                    onChange={(e) => handleFieldChange('titleMiddle', e.target.value)} 
                   />
                 </div>
                 <div className="form-group">
@@ -752,6 +779,50 @@ export const SectionEditModal = () => {
                 <div className="form-group">
                   <label className="form-label">Sous-titre :</label>
                   <input type="text" className="form-input-control" value={formData.subtitle || ''} onChange={(e) => handleFieldChange('subtitle', e.target.value)} />
+                </div>
+              </div>
+
+              <h4 className="editor-card-title">📱 Sélecteur d'Appareils & Connexions</h4>
+              <div className="form-group">
+                <label className="form-label">Texte du sélecteur (Label) :</label>
+                <input 
+                  type="text" 
+                  className="form-input-control" 
+                  value={formData.selectDevicesLabel || ''} 
+                  onChange={(e) => handleFieldChange('selectDevicesLabel', e.target.value)} 
+                  placeholder="Select Active Devices:"
+                />
+              </div>
+              <div className="grid-3-cols">
+                <div className="form-group">
+                  <label className="form-label">Bouton 1 Connexion :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.connection1 || ''} 
+                    onChange={(e) => handleFieldChange('connection1', e.target.value)} 
+                    placeholder="1 Device / Connection"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Bouton 2 Connexions :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.connection2 || ''} 
+                    onChange={(e) => handleFieldChange('connection2', e.target.value)} 
+                    placeholder="2 Devices (Family Pack)"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Bouton 3 Connexions :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.connection3 || ''} 
+                    onChange={(e) => handleFieldChange('connection3', e.target.value)} 
+                    placeholder="3 Devices (Multi-Room)"
+                  />
                 </div>
               </div>
 
@@ -992,6 +1063,11 @@ export const SectionEditModal = () => {
                 </div>
               </div>
 
+              <div className="form-group">
+                <label className="form-label">Description de la bannière VOD :</label>
+                <textarea rows={2} className="form-input-control" value={formData.ctaDesc || ''} onChange={(e) => handleFieldChange('ctaDesc', e.target.value)} placeholder="Our VOD library updates daily..." />
+              </div>
+
               <h4 className="editor-card-title">Films & Séries en vedette</h4>
               {(formData.items || []).map((item, idx) => (
                 <div key={item.id || idx} className="editor-nested-item-card">
@@ -1204,9 +1280,15 @@ export const SectionEditModal = () => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Titre de la bannière Support 24/7 :</label>
-                <input type="text" className="form-input-control" value={formData.bannerTitle || ''} onChange={(e) => handleFieldChange('bannerTitle', e.target.value)} />
+              <div className="grid-2-cols">
+                <div className="form-group">
+                  <label className="form-label">Titre de la bannière Support 24/7 :</label>
+                  <input type="text" className="form-input-control" value={formData.bannerTitle || ''} onChange={(e) => handleFieldChange('bannerTitle', e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Description de la bannière Support :</label>
+                  <input type="text" className="form-input-control" value={formData.bannerDesc || ''} onChange={(e) => handleFieldChange('bannerDesc', e.target.value)} placeholder="Our friendly 24/7 customer support..." />
+                </div>
               </div>
 
               <h4 className="editor-card-title">Questions & Réponses</h4>
@@ -1248,23 +1330,29 @@ export const SectionEditModal = () => {
                   <input type="text" className="form-input-control" value={formData.ratingText || ''} onChange={(e) => handleFieldChange('ratingText', e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Titre de la Garantie :</label>
-                  <input type="text" className="form-input-control" value={formData.guaranteeTitle || ''} onChange={(e) => handleFieldChange('guaranteeTitle', e.target.value)} />
-                </div>
-              </div>
-
-              <div className="grid-2-cols">
-                <div className="form-group">
                   <label className="form-label">Texte Droits d'auteur (Copyright) :</label>
                   <input type="text" className="form-input-control" value={formData.copyrightText || ''} onChange={(e) => handleFieldChange('copyrightText', e.target.value)} />
                 </div>
+              </div>
+
+              <h4 className="editor-card-title">🛡️ Garantie Satisfait ou Remboursé</h4>
+              <div className="grid-2-cols">
+                <div className="form-group">
+                  <label className="form-label">Titre de la Garantie :</label>
+                  <input type="text" className="form-input-control" value={formData.guaranteeTitle || ''} onChange={(e) => handleFieldChange('guaranteeTitle', e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Description de la Garantie :</label>
+                  <input type="text" className="form-input-control" value={formData.guaranteeDesc || ''} onChange={(e) => handleFieldChange('guaranteeDesc', e.target.value)} placeholder="100% risk-free trial with instant money-back protection." />
+                </div>
+              </div>
+
+              <h4 className="editor-card-title">💬 Support & Contact WhatsApp</h4>
+              <div className="grid-3-cols">
                 <div className="form-group">
                   <label className="form-label">Numéro de Téléphone WhatsApp :</label>
                   <input type="text" className="form-input-control" value={formData.whatsappPhone || ''} onChange={(e) => handleFieldChange('whatsappPhone', e.target.value)} />
                 </div>
-              </div>
-
-              <div className="grid-2-cols">
                 <div className="form-group">
                   <label className="form-label">Texte du badge WhatsApp flottant :</label>
                   <input type="text" className="form-input-control" value={formData.supportPillText || ''} onChange={(e) => handleFieldChange('supportPillText', e.target.value)} />
@@ -1272,6 +1360,22 @@ export const SectionEditModal = () => {
                 <div className="form-group">
                   <label className="form-label">Message par défaut WhatsApp :</label>
                   <input type="text" className="form-input-control" value={formData.whatsappDefaultMsg || ''} onChange={(e) => handleFieldChange('whatsappDefaultMsg', e.target.value)} />
+                </div>
+              </div>
+
+              <h4 className="editor-card-title">🔗 Titres des Colonnes du Footer</h4>
+              <div className="grid-3-cols">
+                <div className="form-group">
+                  <label className="form-label">Titre Colonne Navigation :</label>
+                  <input type="text" className="form-input-control" value={formData.navColTitle || ''} onChange={(e) => handleFieldChange('navColTitle', e.target.value)} placeholder="Navigation" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Titre Colonne Bouquets :</label>
+                  <input type="text" className="form-input-control" value={formData.packagesColTitle || ''} onChange={(e) => handleFieldChange('packagesColTitle', e.target.value)} placeholder="Top Packages" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Titre Colonne Sécurité :</label>
+                  <input type="text" className="form-input-control" value={formData.secureColTitle || ''} onChange={(e) => handleFieldChange('secureColTitle', e.target.value)} placeholder="Guaranteed & Secure" />
                 </div>
               </div>
             </div>
@@ -1625,6 +1729,78 @@ export const SectionEditModal = () => {
                   </div>
                 </div>
               </div>
+
+              <h4 className="editor-card-title" style={{ marginTop: '24px' }}>✨ Badges Flottants autour de l'Écran TV</h4>
+              <div className="grid-2-cols">
+                <div className="form-group">
+                  <label className="form-label">Badge Haut Gauche :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.badge1 || ''} 
+                    onChange={(e) => handleFieldChange('badge1', e.target.value)} 
+                    placeholder="⚡ 19K+ Live"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Badge Haut Droite :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.badge2 || ''} 
+                    onChange={(e) => handleFieldChange('badge2', e.target.value)} 
+                    placeholder="4K ULTRA HD"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Badge Bas Gauche :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.badge3 || ''} 
+                    onChange={(e) => handleFieldChange('badge3', e.target.value)} 
+                    placeholder="VOD 56K+"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Badge Bas Droite :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.badge4 || ''} 
+                    onChange={(e) => handleFieldChange('badge4', e.target.value)} 
+                    placeholder="Support 24/7"
+                  />
+                </div>
+              </div>
+
+              <h4 className="editor-card-title" style={{ marginTop: '24px' }}>🛠️ Bandeau d'Installation Facile (Easy Install)</h4>
+              <div className="form-group">
+                <label className="form-label">Titre Easy Install :</label>
+                <input 
+                  type="text" 
+                  className="form-input-control" 
+                  value={formData.easyInstall?.title || ''} 
+                  onChange={(e) => setFormData(prev => ({
+                    ...prev,
+                    easyInstall: { ...(prev.easyInstall || {}), title: e.target.value }
+                  }))} 
+                  placeholder="Installer facilement l'application Atlas Pro ONTV"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Sous-titre / Explication :</label>
+                <textarea 
+                  rows={3} 
+                  className="form-input-control" 
+                  value={formData.easyInstall?.subtitle || ''} 
+                  onChange={(e) => setFormData(prev => ({
+                    ...prev,
+                    easyInstall: { ...(prev.easyInstall || {}), subtitle: e.target.value }
+                  }))} 
+                  placeholder="Vous ne voyez pas votre appareil dans la liste ?..."
+                />
+              </div>
             </div>
           )}
 
@@ -1716,14 +1892,40 @@ export const SectionEditModal = () => {
 
                       <div className="grid-2-cols">
                         <div className="form-group">
-                          <label className="form-label">Lien de Téléchargement (URL) :</label>
-                          <input 
-                            type="text" 
-                            className="form-input-control" 
-                            value={app.downloadUrl || ''} 
-                            onChange={(e) => handleAppFieldChange(catIdx, appIdx, 'downloadUrl', e.target.value)} 
-                            placeholder="https://..."
-                          />
+                          <label className="form-label">Lien de Téléchargement (URL ou Fichier PC) :</label>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <input 
+                              type="text" 
+                              className="form-input-control" 
+                              value={app.downloadUrl || ''} 
+                              onChange={(e) => handleAppFieldChange(catIdx, appIdx, 'downloadUrl', e.target.value)} 
+                              placeholder="https://... ou choisir du PC"
+                              style={{ flex: 1 }}
+                            />
+                            <label className="btn-file-upload-styled" title="Choisir un fichier APK/Application depuis le PC">
+                              📁 Choisir du PC
+                              <input 
+                                type="file" 
+                                accept=".apk,.xapk,.zip,.exe,.dmg,.pkg,.rar,application/*" 
+                                style={{ display: 'none' }} 
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  const reader = new FileReader();
+                                  reader.onload = (uploadEvt) => {
+                                    handleAppFieldChange(catIdx, appIdx, 'downloadUrl', uploadEvt.target.result);
+                                    handleAppFieldChange(catIdx, appIdx, 'fileName', file.name);
+                                  };
+                                  reader.readAsDataURL(file);
+                                }}
+                              />
+                            </label>
+                          </div>
+                          {app.fileName && (
+                            <span style={{ fontSize: '0.74rem', color: '#10b981', marginTop: '4px', display: 'block' }}>
+                              ✅ Fichier : {app.fileName}
+                            </span>
+                          )}
                         </div>
                         <div className="form-group">
                           <label className="form-label">Texte du Bouton :</label>

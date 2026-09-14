@@ -3,7 +3,7 @@ import { useContent } from '../context/ContentContext';
 import { AdminEditWrapper } from './AdminEditWrapper';
 import { IconCheck } from './Icons';
 
-export const Hero = ({ onOpenOrderModal, onExploreChannels }) => {
+export const Hero = ({ onOpenOrderModal, onExploreChannels, onNavigate }) => {
   const { content } = useContent();
   const heroData = content?.hero || {};
 
@@ -73,8 +73,14 @@ export const Hero = ({ onOpenOrderModal, onExploreChannels }) => {
                 {heroData.btnSubscribe || 'Subscribe Now'}
               </button>
               <a 
-                href="#pricing" 
+                href="/pricing" 
                 className="btn-hero-plans"
+                onClick={(e) => {
+                  if (onNavigate) {
+                    e.preventDefault();
+                    onNavigate('pricing');
+                  }
+                }}
               >
                 {heroData.btnPlans || 'Premium Plans'}
               </a>

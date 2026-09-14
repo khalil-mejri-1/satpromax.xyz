@@ -9,7 +9,7 @@ export const EpgSection = ({ onOpenOrderModal }) => {
 
   return (
     <AdminEditWrapper sectionKey="epg" sectionTitle="ميزة الدليل الإلكتروني (EPG)">
-      <section className="epg-section">
+      <section id="epg" className="epg-section">
         <div className="epg-container">
           <div className="epg-glass-banner">
             {/* Left Column: 3D Stack of Channel Cubes Visual */}

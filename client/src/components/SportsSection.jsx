@@ -110,7 +110,7 @@ export const SportsSection = ({ onOpenChannelExplorer }) => {
 
   return (
     <AdminEditWrapper sectionKey="sports" sectionTitle="Événements Sportifs & PPV">
-      <section className="sports-section">
+      <section id="sports" className="sports-section">
         <div className="sports-container">
           {/* Title */}
           <div className="section-header-center">

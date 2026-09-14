@@ -22,7 +22,7 @@ export const FloatingWidgets = () => {
   };
 
   const cleanPhone = (footerData.whatsappPhone || '+15551234567').replace(/[^0-9]/g, '');
-  const defaultMsg = encodeURIComponent(footerData.whatsappDefaultMsg || 'Hello IPPLAY TV Support, I would like to get started with IPTV');
+  const defaultMsg = encodeURIComponent(footerData.whatsappDefaultMsg || 'Hello SatProMax Support, I would like to get started with IPTV');
 
   return (
     <>

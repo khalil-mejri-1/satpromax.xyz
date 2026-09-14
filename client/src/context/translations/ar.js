@@ -32,7 +32,7 @@ export const ar = {
     pricing: {
       badge: "الباقات المميزة",
       titlePrefix: "اختر",
-      titleHighlight: "بافتك المثالية",
+      titleHighlight: "باقتك المثالية",
       subtitle: "جميع الباقات تشمل الميزات الكاملة والدعم الفني المباشر على مدار 24 ساعة",
       selectDevicesLabel: "اختر عدد الأجهزة والاتصالات:",
       btnOrderNow: "اشترك الآن",
@@ -125,7 +125,7 @@ export const ar = {
         {
           id: '24m',
           title: '24 شهرًا (سنتين)',
-          badge: 'خصم 75% - توفير فائض',
+          badge: 'خصم 75% - التوفير الأكبر',
           price: 89.99,
           period: '/ 24 شهرًا',
           savings: 'فقط $3.74/شهرياً',

@@ -1,6 +1,236 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useContent } from '../context/ContentContext';
-import { IconClose, IconCheck, IconZap, IconShieldCheck, IconSearch, IconPlayCircle, IconStar, IconTv } from './Icons';
+import { API_ENDPOINTS } from '../config/api';
+import { 
+  IconClose, 
+  IconCheck, 
+  IconZap, 
+  IconShieldCheck, 
+  IconSearch, 
+  IconPlayCircle, 
+  IconStar, 
+  IconTv,
+  IconChevronDown,
+  IconAndroid,
+  IconApple,
+  IconMonitor,
+  IconServer
+} from './Icons';
+
+const DEVICE_OPTIONS = [
+  {
+    value: 'FireStick',
+    label: 'Amazon FireStick / Fire TV',
+    sublabel: 'Fire TV Stick 4K, Max, Cube, Lite',
+    badge: 'Fire TV',
+    badgeClass: 'device-badge-firestick',
+    deviceType: 'firestick'
+  },
+  {
+    value: 'SmartTV',
+    label: 'Samsung or LG Smart TV',
+    sublabel: 'Tizen OS, webOS, IBO Player, Smarters',
+    badge: 'Smart TV',
+    badgeClass: 'device-badge-smarttv',
+    deviceType: 'smarttv'
+  },
+  {
+    value: 'AndroidTV',
+    label: 'Android TV Box / Nvidia Shield',
+    sublabel: 'Xiaomi Mi Box, Google TV, Chromecast',
+    badge: 'Android',
+    badgeClass: 'device-badge-androidtv',
+    deviceType: 'androidtv'
+  },
+  {
+    value: 'Apple',
+    label: 'Apple TV / iPhone / iPad',
+    sublabel: 'Apple TV 4K, iOS, iPadOS, Mac',
+    badge: 'Apple',
+    badgeClass: 'device-badge-apple',
+    deviceType: 'apple'
+  },
+  {
+    value: 'MAG',
+    label: 'MAG Box / Formuler (Provide MAC)',
+    sublabel: 'MAG 250/322/524, Formuler Z / Stalker',
+    badge: 'MAG Box',
+    badgeClass: 'device-badge-mag',
+    deviceType: 'mag'
+  },
+  {
+    value: 'PC',
+    label: 'Windows PC / Mac Computer',
+    sublabel: 'VLC Media Player, IPTV Smarters Pro, Web',
+    badge: 'PC / Mac',
+    badgeClass: 'device-badge-pc',
+    deviceType: 'pc'
+  }
+];
+
+const renderDeviceIcon = (deviceKey, size = 18) => {
+  switch (deviceKey) {
+    case 'androidtv':
+    case 'AndroidTV':
+      return <IconAndroid size={size} />;
+    case 'apple':
+    case 'Apple':
+      return <IconApple size={size} />;
+    case 'pc':
+    case 'PC':
+      return <IconMonitor size={size} />;
+    case 'mag':
+    case 'MAG':
+      return <IconServer size={size} />;
+    case 'firestick':
+    case 'FireStick':
+    case 'smarttv':
+    case 'SmartTV':
+    default:
+      return <IconTv size={size} />;
+  }
+};
+
+const DeviceSelectDropdown = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const selectedOption = DEVICE_OPTIONS.find((opt) => opt.value === value) || DEVICE_OPTIONS[0];
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setIsOpen((prev) => !prev);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+      } else {
+        const currentIndex = DEVICE_OPTIONS.findIndex((opt) => opt.value === value);
+        const nextIndex = (currentIndex + 1) % DEVICE_OPTIONS.length;
+        onChange(DEVICE_OPTIONS[nextIndex].value);
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+      } else {
+        const currentIndex = DEVICE_OPTIONS.findIndex((opt) => opt.value === value);
+        const prevIndex = (currentIndex - 1 + DEVICE_OPTIONS.length) % DEVICE_OPTIONS.length;
+        onChange(DEVICE_OPTIONS[prevIndex].value);
+      }
+    }
+  };
+
+  return (
+    <div className={`custom-device-select-container ${isOpen ? 'is-open' : ''}`} ref={dropdownRef}>
+      {/* Hidden fallback select for complete form compatibility */}
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="visually-hidden-select"
+        tabIndex={-1}
+        aria-hidden="true"
+      >
+        {DEVICE_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+
+      {/* Trigger button */}
+      <button
+        type="button"
+        className={`custom-device-select-trigger ${isOpen ? 'active-open' : ''}`}
+        onClick={() => setIsOpen((prev) => !prev)}
+        onKeyDown={handleKeyDown}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <div className="trigger-selected-content">
+          <span className={`device-icon-badge ${selectedOption.badgeClass}`}>
+            {renderDeviceIcon(selectedOption.deviceType, 18)}
+          </span>
+          <div className="trigger-text-wrapper">
+            <div className="trigger-title-row">
+              <span className="trigger-device-title">{selectedOption.label}</span>
+              <span className="trigger-badge-tag">{selectedOption.badge}</span>
+            </div>
+            <span className="trigger-device-sublabel">{selectedOption.sublabel}</span>
+          </div>
+        </div>
+        <div className="trigger-chevron-wrapper">
+          <IconChevronDown size={18} className={`chevron-icon ${isOpen ? 'rotate-open' : ''}`} />
+        </div>
+      </button>
+
+      {/* Dropdown Options Popup */}
+      {isOpen && (
+        <div className="custom-device-dropdown-menu animate-dropdown-pop" role="listbox">
+          {DEVICE_OPTIONS.map((opt) => {
+            const isSelected = opt.value === value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                className={`custom-device-option-item ${isSelected ? 'option-selected' : ''}`}
+                onClick={() => {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }}
+              >
+                <span className={`device-icon-badge ${opt.badgeClass}`}>
+                  {renderDeviceIcon(opt.deviceType, 18)}
+                </span>
+                <div className="option-text-group">
+                  <div className="option-title-row">
+                    <span className="option-title">{opt.label}</span>
+                    <span className="option-badge-tag">{opt.badge}</span>
+                  </div>
+                  <span className="option-sublabel">{opt.sublabel}</span>
+                </div>
+                <div className="option-indicator">
+                  {isSelected ? (
+                    <span className="option-check-circle">
+                      <IconCheck size={13} />
+                    </span>
+                  ) : (
+                    <span className="option-radio-dot" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Modals = ({
   orderModalData,
@@ -9,34 +239,78 @@ export const Modals = ({
   onCloseChannelExplorer,
   currentCurrency = 'USD',
 }) => {
-  const { content } = useContent();
+  const { content, addOrder } = useContent();
   const modalsData = content?.modals || {};
+  const footerData = content?.footer || {};
+  const cleanWhatsappPhone = (content?.footer?.whatsappPhone || '').replace(/[^0-9]/g, '');
+
+  const rawPaymentMethods = content?.paymentMethods 
+    || footerData?.paymentMethods 
+    || [];
+
+  const activePaymentMethods = useMemo(() => {
+    return Array.isArray(rawPaymentMethods)
+      ? rawPaymentMethods.filter((m) => m && m.enabled !== false && m.id !== 'card' && m.id !== 'paypal' && m.id !== 'crypto')
+      : [];
+  }, [rawPaymentMethods]);
+
+  const paymentLabel = footerData?.paymentLabel 
+    || modalsData.paymentLabel 
+    || 'Select Payment Method:';
+
+  const securityText = footerData?.securityText 
+    || modalsData.securityText 
+    || '256-Bit SSL Encrypted • 7-Day Money-Back Guarantee';
 
   // Order Modal State
   const [deviceType, setDeviceType] = useState('FireStick');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerWhatsapp, setCustomerWhatsapp] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState('card');
+  const [selectedPayment, setSelectedPayment] = useState(() => activePaymentMethods[0]?.id || '');
+
+  // Ensure selectedPayment matches an active method
+  useEffect(() => {
+    if (activePaymentMethods.length > 0) {
+      if (!activePaymentMethods.some((m) => m.id === selectedPayment)) {
+        setSelectedPayment(activePaymentMethods[0].id);
+      }
+    } else {
+      setSelectedPayment('');
+    }
+  }, [activePaymentMethods, selectedPayment]);
 
   // Channel Explorer State
   const [channelSearch, setChannelSearch] = useState('');
   const [countryFilter, setCountryFilter] = useState('All');
 
+  // Device dropdown open state
+  const [deviceDropdownOpen, setDeviceDropdownOpen] = useState(false);
+  const deviceDropdownRef = useRef(null);
+
+  // Close custom dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (deviceDropdownRef.current && !deviceDropdownRef.current.contains(e.target)) {
+        setDeviceDropdownOpen(false);
+      }
+    };
+    if (deviceDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [deviceDropdownOpen]);
+
   const fullChannelsList = [
-    { country: 'USA', name: 'ESPN 4K Ultra HD', category: 'Sports', quality: '4K', status: 'Live' },
-    { country: 'USA', name: 'HBO East / West 4K', category: 'Movies', quality: '4K', status: 'Live' },
-    { country: 'USA', name: 'NBC Sports Network', category: 'Sports', quality: '1080p 60FPS', status: 'Live' },
-    { country: 'USA', name: 'FOX News Channel HD', category: 'News', quality: '1080p', status: 'Live' },
-    { country: 'USA', name: 'Disney Channel FHD', category: 'Kids', quality: '1080p', status: 'Live' },
-    { country: 'USA', name: 'Discovery Channel HD', category: 'Documentary', quality: '1080p', status: 'Live' },
-    { country: 'USA', name: 'TNT & TBS HD', category: 'Entertainment', quality: '1080p', status: 'Live' },
-    { country: 'UK', name: 'Sky Sports Main Event UHD', category: 'Sports', quality: '4K UHD', status: 'Live' },
-    { country: 'UK', name: 'Sky Sports Premier League', category: 'Sports', quality: '4K 60FPS', status: 'Live' },
-    { country: 'UK', name: 'TNT Sports 1 / 2 / 3 / 4', category: 'Sports', quality: '4K UHD', status: 'Live' },
-    { country: 'UK', name: 'BBC One FHD / Two HD', category: 'General', quality: '1080p', status: 'Live' },
-    { country: 'UK', name: 'Sky Cinema Premiere HD', category: 'Movies', quality: '4K UHD', status: 'Live' },
-    { country: 'Canada', name: 'TSN 1, 2, 3, 4, 5 HD', category: 'Sports', quality: '1080p 60FPS', status: 'Live' },
+    { country: 'USA', name: 'ESPN 1 & 2 HD / 4K UHD', category: 'Sports', quality: '4K UHD', status: 'Live' },
+    { country: 'USA', name: 'HBO, Cinemax, Showtime Max', category: 'Movies', quality: '1080p FHD', status: 'Live' },
+    { country: 'USA', name: 'NBC, CBS, FOX, ABC Networks', category: 'General', quality: '1080p FHD', status: 'Live' },
+    { country: 'UK', name: 'Sky Sports Main Event UHD', category: 'Sports', quality: '4K 60FPS', status: 'Live' },
+    { country: 'UK', name: 'TNT Sports 1, 2, 3, 4 Ultimate 4K', category: 'Sports', quality: '4K HDR', status: 'Live' },
+    { country: 'UK', name: 'BBC One, Two, ITV 1-4 HD', category: 'Entertainment', quality: '1080p', status: 'Live' },
+    { country: 'Canada', name: 'TSN 1-5 & RDS Canada 4K', category: 'Sports', quality: '4K', status: 'Live' },
     { country: 'Canada', name: 'Sportsnet Ontario / West', category: 'Sports', quality: '1080p 60FPS', status: 'Live' },
     { country: 'Arab', name: 'beIN SPORTS 1-9 Premium 4K', category: 'Sports', quality: '4K 60FPS', status: 'Live' },
     { country: 'Arab', name: 'beIN SPORTS AFC & MAX', category: 'Sports', quality: 'FHD', status: 'Live' },
@@ -58,10 +332,47 @@ export const Modals = ({
     return matchesCountry && matchesQuery;
   });
 
-  const handleOrderSubmit = (e) => {
+  const [submittingOrder, setSubmittingOrder] = useState(false);
+
+  const handleOrderSubmit = async (e) => {
     e.preventDefault();
     if (!customerEmail) return;
-    setOrderSuccess(true);
+
+    setSubmittingOrder(true);
+    try {
+      const orderPayload = {
+        action: 'create_order',
+        orderId: 'SPM-' + Math.floor(100000 + Math.random() * 900000),
+        plan: orderModalData.title || orderModalData.plan || '12 Months VIP',
+        package: orderModalData.title || orderModalData.plan || '12 Months VIP',
+        price: orderModalData.price || '€49.99',
+        customerEmail: customerEmail.trim(),
+        customerWhatsapp: customerWhatsapp.trim() || 'Non spécifié',
+        deviceType: deviceType,
+        paymentMethod: (() => {
+          const chosenMethod = activePaymentMethods.find(m => m.id === selectedPayment);
+          return chosenMethod ? chosenMethod.name : (selectedPayment || 'Standard');
+        })(),
+        currency: orderModalData.currency || '€',
+        timestamp: new Date().toISOString(),
+        notes: `Currency: ${currentCurrency}`,
+      };
+
+      if (addOrder) {
+        await addOrder(orderPayload);
+      } else {
+        await fetch(API_ENDPOINTS.vetrine, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderPayload),
+        });
+      }
+    } catch (err) {
+      console.warn('Backend order recording offline, continuing locally:', err);
+    } finally {
+      setSubmittingOrder(false);
+      setOrderSuccess(true);
+    }
   };
 
   return (
@@ -120,54 +431,37 @@ export const Modals = ({
 
                   <div className="form-group">
                     <label className="form-label">{modalsData.deviceLabel || 'Primary Device you will use:'}</label>
-                    <select 
+                    <DeviceSelectDropdown 
                       value={deviceType}
-                      onChange={(e) => setDeviceType(e.target.value)}
-                      className="form-select-control"
-                    >
-                      <option value="FireStick">Amazon FireStick / Fire TV</option>
-                      <option value="SmartTV">Samsung or LG Smart TV</option>
-                      <option value="AndroidTV">Android TV Box / Nvidia Shield</option>
-                      <option value="Apple">Apple TV / iPhone / iPad</option>
-                      <option value="MAG">MAG Box / Formuler (Provide MAC)</option>
-                      <option value="PC">Windows PC / Mac Computer</option>
-                    </select>
+                      onChange={setDeviceType}
+                    />
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">{modalsData.paymentLabel || 'Select Payment Method:'}</label>
-                    <div className="payment-options-grid">
-                      <button 
-                        type="button" 
-                        className={`pay-opt-box ${selectedPayment === 'card' ? 'active' : ''}`}
-                        onClick={() => setSelectedPayment('card')}
-                      >
-                        <span>{modalsData.payCard || '💳 Credit / Debit Card'}</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        className={`pay-opt-box ${selectedPayment === 'paypal' ? 'active' : ''}`}
-                        onClick={() => setSelectedPayment('paypal')}
-                      >
-                        <span>{modalsData.payPaypal || '🅿️ PayPal'}</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        className={`pay-opt-box ${selectedPayment === 'crypto' ? 'active' : ''}`}
-                        onClick={() => setSelectedPayment('crypto')}
-                      >
-                        <span>{modalsData.payCrypto || '₿ Crypto (USDT / BTC)'}</span>
-                      </button>
+                  {activePaymentMethods.length > 0 && (
+                    <div className="form-group">
+                      <label className="form-label">{paymentLabel}</label>
+                      <div className="payment-options-grid">
+                        {activePaymentMethods.map((pm) => (
+                          <button 
+                            key={pm.id}
+                            type="button" 
+                            className={`pay-opt-box ${selectedPayment === pm.id ? 'active' : ''}`}
+                            onClick={() => setSelectedPayment(pm.id)}
+                          >
+                            <span>{pm.name}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="order-security-row">
                     <IconShieldCheck size={16} />
-                    <span>{modalsData.securityText || '256-Bit SSL Encrypted • 7-Day Money-Back Guarantee'}</span>
+                    <span>{securityText}</span>
                   </div>
 
-                  <button type="submit" className="btn-modal-checkout-submit">
-                    <span>{modalsData.btnSubmitOrder || 'Activate Subscription Now'}</span>
+                  <button type="submit" className="btn-modal-checkout-submit" disabled={submittingOrder}>
+                    <span>{submittingOrder ? 'Activation en cours...' : (modalsData.btnSubmitOrder || 'Activate Subscription Now')}</span>
                     <IconZap size={18} />
                   </button>
                 </form>
@@ -189,7 +483,9 @@ export const Modals = ({
 
                 <div className="success-actions-row">
                   <a 
-                    href={`https://wa.me/?text=Hello%20SatProMax,%20I%20just%20placed%20order%20for%20email%20${encodeURIComponent(customerEmail)}`}
+                    href={cleanWhatsappPhone 
+                      ? `https://wa.me/${cleanWhatsappPhone}?text=Hello%20SatProMax,%20I%20just%20placed%20order%20for%20email%20${encodeURIComponent(customerEmail)}`
+                      : `https://wa.me/?text=Hello%20SatProMax,%20I%20just%20placed%20order%20for%20email%20${encodeURIComponent(customerEmail)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-whatsapp-confirm"

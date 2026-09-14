@@ -32,7 +32,7 @@ const vetrineSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'active', 'completed', 'cancelled'],
+      enum: ['pending', 'confirmed', 'active', 'completed', 'cancelled'],
       default: 'pending',
     },
     notes: {

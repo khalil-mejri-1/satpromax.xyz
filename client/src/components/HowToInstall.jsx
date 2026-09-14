@@ -47,7 +47,7 @@ export const HowToInstall = ({ onOpenOrderModal }) => {
       devices: 'MAG 250/322/524, Formuler Z10/Z11',
       steps: [
         'Go to Settings -> System Settings -> Servers -> Portals.',
-        'Set Portal 1 Name to "IPPLAY TV" and enter the Portal URL provided in your activation email.',
+        'Set Portal 1 Name to "SatProMax IPTV" and enter the Portal URL provided in your activation email.',
         'Send us your MAG device MAC address (starts with 00:1A:79:xx:xx:xx) to whitelist.',
         'Reboot the device portal to access all channels, EPG, and VOD on your TV.',
       ],

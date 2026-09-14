@@ -141,8 +141,9 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
         },
         {
           key: 'url',
-          label: 'Lien de téléchargement direct (URL)',
-          placeholder: 'https://... ou #',
+          label: 'Lien de téléchargement direct (URL ou Fichier PC)',
+          type: 'file',
+          placeholder: "Collez l'URL ou cliquez sur 'Choisir du PC'...",
           defaultValue: '#',
         },
         {
@@ -152,13 +153,16 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
           defaultValue: "Télécharger l'application",
         },
       ],
-      onConfirm: ({ name, platform, logo, code, url, btnText }) => {
+      onConfirm: (values) => {
+        const { name, platform, logo, code, url, btnText, fileName, fileSize } = values;
         const trimmedName = (name || 'Nouvelle Application').trim();
         const newApp = {
           id: `app_${Date.now()}`,
           name: trimmedName,
           downloaderCode: (code || '').trim(),
           downloadUrl: (url || '#').trim(),
+          fileName: fileName || `${trimmedName.replace(/[^a-zA-Z0-9_-]/g, '_')}.apk`,
+          fileSize: fileSize || '',
           btnText: (btnText || `Télécharger ${trimmedName}`).trim(),
           logo: (logo || '').trim(),
           platform: platform || 'android',
@@ -253,8 +257,9 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
         },
         {
           key: 'url',
-          label: 'Lien de téléchargement direct (URL)',
-          placeholder: 'https://... ou #',
+          label: 'Lien de téléchargement direct (URL ou Fichier PC)',
+          type: 'file',
+          placeholder: "Collez l'URL ou cliquez sur 'Choisir du PC'...",
           defaultValue: app.downloadUrl || '#',
         },
         {
@@ -264,7 +269,8 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
           defaultValue: app.btnText || "Télécharger l'application",
         },
       ],
-      onConfirm: ({ name, platform, logo, code, url, btnText }) => {
+      onConfirm: (values) => {
+        const { name, platform, logo, code, url, btnText, fileName, fileSize } = values;
         const trimmedName = (name || app.name || 'Application').trim();
         const updatedApp = {
           ...app,
@@ -273,6 +279,8 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
           logo: (logo !== undefined ? logo : app.logo || '').trim(),
           downloaderCode: (code || '').trim(),
           downloadUrl: (url || '#').trim(),
+          fileName: fileName || app.fileName || `${trimmedName.replace(/[^a-zA-Z0-9_-]/g, '_')}.apk`,
+          fileSize: fileSize || app.fileSize || '',
           btnText: (btnText || `Télécharger ${trimmedName}`).trim(),
         };
 
@@ -621,9 +629,10 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
 
                     {/* Download Button */}
                     <a
-                      href={app.downloadUrl || '#'}
+                      href={app.downloadUrl && app.downloadUrl !== '#' ? app.downloadUrl : '#'}
+                      download={app.downloadUrl && app.downloadUrl !== '#' ? (app.fileName || `${app.name.replace(/[^a-zA-Z0-9_-]/g, '_')}.apk`) : undefined}
                       className="app-card-download-btn"
-                      target="_blank"
+                      target={app.downloadUrl && (app.downloadUrl.startsWith('data:') || app.downloadUrl.startsWith('blob:')) ? undefined : '_blank'}
                       rel="noopener noreferrer"
                       onClick={(e) => {
                         if (!app.downloadUrl || app.downloadUrl === '#') {
@@ -639,6 +648,25 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
                             },
                             confirmText: 'Compris',
                           });
+                          return;
+                        }
+
+                        // Direct download handling for local uploaded files (Data URLs or Blob)
+                        if (app.downloadUrl.startsWith('data:') || app.downloadUrl.startsWith('blob:')) {
+                          e.preventDefault();
+                          try {
+                            const filename = app.fileName || `${app.name.replace(/[^a-zA-Z0-9_-]/g, '_')}.apk`;
+                            const tempLink = document.createElement('a');
+                            tempLink.href = app.downloadUrl;
+                            tempLink.download = filename;
+                            tempLink.setAttribute('download', filename);
+                            document.body.appendChild(tempLink);
+                            tempLink.click();
+                            document.body.removeChild(tempLink);
+                          } catch (err) {
+                            console.error('Download error:', err);
+                            window.open(app.downloadUrl, '_blank');
+                          }
                         }
                       }}
                     >

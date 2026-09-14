@@ -17,7 +17,8 @@ const MONGO_URI =
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Connect to MongoDB Atlas (Serverless cached connection for Vercel)
 let isConnected = false;
@@ -93,17 +94,17 @@ app.get('/api/vetrine', async (req, res) => {
 // 3. Create a New Document / Subscription Order in "vetrine"
 app.post('/api/vetrine', async (req, res) => {
   try {
-    const { plan, price, customerEmail, customerWhatsapp, deviceType, paymentMethod, notes } = req.body;
+    const { plan, package: pkg, price, customerEmail, customerWhatsapp, deviceType, paymentMethod, notes } = req.body;
 
     if (!customerEmail) {
       return res.status(400).json({ error: 'customerEmail is required' });
     }
 
     const newRecord = new Vetrine({
-      plan: plan || '12 Months Plan',
+      plan: plan || pkg || '12 Months Plan',
       price: price || '$59.99',
-      customerEmail,
-      customerWhatsapp,
+      customerEmail: customerEmail.trim(),
+      customerWhatsapp: customerWhatsapp ? customerWhatsapp.trim() : '',
       deviceType: deviceType || 'FireStick',
       paymentMethod: paymentMethod || 'card',
       status: 'pending',
@@ -130,6 +131,30 @@ app.delete('/api/vetrine/:id', async (req, res) => {
       return res.status(404).json({ error: 'Record not found' });
     }
     res.json({ message: 'Record deleted successfully', status: 'success' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 4.1 Update Order (Status, Notes, etc.) in "vetrine"
+app.patch('/api/vetrine/:id', async (req, res) => {
+  try {
+    const { status, notes, plan, price, customerEmail, customerWhatsapp, deviceType, paymentMethod } = req.body;
+    const updateData = {};
+    if (status !== undefined) updateData.status = status;
+    if (notes !== undefined) updateData.notes = notes;
+    if (plan !== undefined) updateData.plan = plan;
+    if (price !== undefined) updateData.price = price;
+    if (customerEmail !== undefined) updateData.customerEmail = customerEmail;
+    if (customerWhatsapp !== undefined) updateData.customerWhatsapp = customerWhatsapp;
+    if (deviceType !== undefined) updateData.deviceType = deviceType;
+    if (paymentMethod !== undefined) updateData.paymentMethod = paymentMethod;
+
+    const updated = await Vetrine.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (!updated) {
+      return res.status(404).json({ error: 'Record not found' });
+    }
+    res.json({ message: 'Order updated successfully', status: 'success', data: updated });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useContent } from '../context/ContentContext';
-import { IconTv, IconTag, IconMonitor, IconHeadphones, IconChevronDown, IconPlay, IconMenu, IconClose, IconDownload } from './Icons';
+import { IconTv, IconTag, IconMonitor, IconHeadphones, IconChevronDown, IconPlay, IconMenu, IconClose, IconDownload, IconGlobe } from './Icons';
 import { LanguageIconsModal } from './LanguageIconsModal';
 
-export const Navbar = ({ onOpenOrderModal }) => {
+export const Navbar = ({ onOpenOrderModal, onNavigateDashboard, currentRoute, onNavigate }) => {
   const { content, currentLang, setLang, languages: contextLanguages, isAdmin, setActiveEditingSection } = useContent();
   const navData = content?.navbar || {};
 
@@ -12,6 +12,14 @@ export const Navbar = ({ onOpenOrderModal }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showIconModal, setShowIconModal] = useState(false);
   const dropdownRef = useRef(null);
+
+  const handleNavClick = (e, route) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(route);
+      setMobileMenuOpen(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,29 +59,54 @@ export const Navbar = ({ onOpenOrderModal }) => {
     <header className={`navbar-header ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
         {/* Logo */}
-        <a href="#" className="nav-logo" aria-label="SatProMax Home">
+        <a 
+          href="/" 
+          className="nav-logo" 
+          aria-label="SatProMax Home"
+          onClick={(e) => handleNavClick(e, 'home')}
+        >
           <img src="/satpromax-logo.png" alt="SatProMax Logo" className="site-logo-img" />
         </a>
 
         {/* Desktop Nav Links */}
         <nav className="nav-links-desktop">
-          <a href="#pricing" className="nav-link">
+          <a 
+            href="/pricing" 
+            className={`nav-link ${currentRoute === 'pricing' ? 'active' : ''}`}
+            onClick={(e) => handleNavClick(e, 'pricing')}
+          >
             <IconTag size={16} className="nav-link-icon" />
             <span>{navData.linkPricing || 'Pricing'}</span>
           </a>
-          <a href="#channels" className="nav-link">
+          <a 
+            href="/channels" 
+            className={`nav-link ${currentRoute === 'channels' ? 'active' : ''}`}
+            onClick={(e) => handleNavClick(e, 'channels')}
+          >
             <IconTv size={16} className="nav-link-icon" />
             <span>{navData.linkChannels || 'Channels List'}</span>
           </a>
-          <a href="#install" className="nav-link">
+          <a 
+            href="/install" 
+            className={`nav-link ${currentRoute === 'install' ? 'active' : ''}`}
+            onClick={(e) => handleNavClick(e, 'install')}
+          >
             <IconMonitor size={16} className="nav-link-icon" />
             <span>{navData.linkInstall || 'How To Install'}</span>
           </a>
-          <a href="/download-apps" target="_blank" rel="noopener noreferrer" className="nav-link nav-link-apps-highlight">
+          <a 
+            href="/download-apps" 
+            className={`nav-link nav-link-apps-highlight ${currentRoute === 'download-apps' ? 'active' : ''}`}
+            onClick={(e) => handleNavClick(e, 'download-apps')}
+          >
             <IconDownload size={16} className="nav-link-icon" />
             <span>{navData.linkApps || 'Download Apps'}</span>
           </a>
-          <a href="#footer" className="nav-link">
+          <a 
+            href="/contact" 
+            className={`nav-link ${currentRoute === 'contact' ? 'active' : ''}`}
+            onClick={(e) => handleNavClick(e, 'contact')}
+          >
             <IconHeadphones size={16} className="nav-link-icon" />
             <span>{navData.linkContact || 'Contact'}</span>
           </a>
@@ -81,63 +114,58 @@ export const Navbar = ({ onOpenOrderModal }) => {
 
         {/* Right Actions */}
         <div className="nav-actions-desktop">
-          {/* Admin Edit Button for Navbar */}
-          {isAdmin && (
-            <button 
-              type="button" 
-              className="btn-trigger-section-edit navbar-admin-edit-btn"
-              onClick={() => setActiveEditingSection({ key: 'navbar', title: 'En-tête (Navbar)' })}
-              title="Modifier les boutons, le logo et les liens de la Navbar"
-            >
-              <span className="edit-icon">✏️</span>
-              <span>Modifier Navbar</span>
-            </button>
-          )}
-
-          {/* Language Selector Dropdown */}
+          {/* Language Selector Dropdown with Globe Logo */}
           <div className="lang-switcher-container" ref={dropdownRef}>
             <button 
               type="button" 
-              className="lang-switcher-btn"
+              className="lang-switcher-btn lang-globe-btn"
               onClick={() => setLangMenuOpen(!langMenuOpen)}
-              aria-label="Select Language"
+              aria-label="Select Language / اختيار اللغة"
+              title={`Language: ${currentLanguageObj.name}`}
             >
-              {renderLangIcon(currentLanguageObj)}
-              <span className="lang-name">{currentLanguageObj.name}</span>
-              <IconChevronDown size={14} className={`lang-arrow ${langMenuOpen ? 'open' : ''}`} />
+              <IconGlobe size={20} className="lang-globe-icon" />
+              <span className="lang-code-tag">{currentLanguageObj.code.toUpperCase()}</span>
+              <IconChevronDown size={13} className={`lang-arrow ${langMenuOpen ? 'open' : ''}`} />
             </button>
 
             {langMenuOpen && (
               <div className="lang-dropdown-menu">
-                {languages.map((l) => (
-                  <button
-                    key={l.code}
-                    type="button"
-                    className={`lang-option ${currentLang === l.code ? 'active' : ''}`}
-                    onClick={() => {
-                      setLang(l.code);
-                      setLangMenuOpen(false);
-                    }}
-                  >
-                    {renderLangIcon(l)}
-                    <span className="lang-label">{l.name}</span>
-                    {currentLang === l.code && <span className="lang-active-dot">•</span>}
-                  </button>
-                ))}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: '6px', paddingTop: '6px' }}>
-                  <button
-                    type="button"
-                    className="lang-option"
-                    style={{ fontSize: '0.8rem', color: '#fbbf24', justifyContent: 'center', gap: '6px' }}
-                    onClick={() => {
-                      setLangMenuOpen(false);
-                      setShowIconModal(true);
-                    }}
-                  >
-                    <span>⚙️</span>
-                    <span>{currentLang === 'ar' ? 'تخصيص الأيقونات' : currentLang === 'fr' ? 'Changer les icônes' : 'Customize Icons'}</span>
-                  </button>
+                <div className="lang-dropdown-header">
+                  <IconGlobe size={15} className="lang-dropdown-header-icon" />
+                  <span>{currentLang === 'ar' ? 'اختر لغة الموقع' : currentLang === 'fr' ? 'Choisir la langue' : 'Select Language'}</span>
                 </div>
+                <div className="lang-dropdown-items-list">
+                  {languages.map((l) => (
+                    <button
+                      key={l.code}
+                      type="button"
+                      className={`lang-option ${currentLang === l.code ? 'active' : ''}`}
+                      onClick={() => {
+                        setLang(l.code);
+                        setLangMenuOpen(false);
+                      }}
+                    >
+                      {renderLangIcon(l)}
+                      <span className="lang-label">{l.name}</span>
+                      {currentLang === l.code && <span className="lang-active-dot">•</span>}
+                    </button>
+                  ))}
+                </div>
+                {isAdmin && (
+                  <div className="lang-dropdown-footer">
+                    <button
+                      type="button"
+                      className="lang-option lang-option-customize"
+                      onClick={() => {
+                        setLangMenuOpen(false);
+                        setShowIconModal(true);
+                      }}
+                    >
+                      <span>⚙️</span>
+                      <span>{currentLang === 'ar' ? 'تخصيص الأيقونات' : currentLang === 'fr' ? 'Changer les icônes' : 'Customize Icons'}</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -166,6 +194,21 @@ export const Navbar = ({ onOpenOrderModal }) => {
         </button>
       </div>
 
+      {/* Floating Admin Edit Button for Navbar (Pinned to far edge of the entire page) */}
+      {isAdmin && (
+        <div className="navbar-admin-floating-badge">
+          <button 
+            type="button" 
+            className="btn-trigger-section-edit navbar-admin-edit-btn"
+            onClick={() => setActiveEditingSection({ key: 'navbar', title: 'En-tête (Navbar)' })}
+            title="Modifier les boutons, le logo et les liens de la Navbar"
+          >
+            <span className="edit-icon">✏️</span>
+            <span>Modifier Navbar</span>
+          </button>
+        </div>
+      )}
+
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="mobile-drawer animate-slide-down">
@@ -184,23 +227,43 @@ export const Navbar = ({ onOpenOrderModal }) => {
             </button>
           )}
 
-          <a href="#pricing" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+          <a 
+            href="/pricing" 
+            className={`mobile-nav-link ${currentRoute === 'pricing' ? 'active' : ''}`} 
+            onClick={(e) => handleNavClick(e, 'pricing')}
+          >
             <IconTag size={18} />
             <span>{navData.linkPricing || 'Pricing'}</span>
           </a>
-          <a href="#channels" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+          <a 
+            href="/channels" 
+            className={`mobile-nav-link ${currentRoute === 'channels' ? 'active' : ''}`} 
+            onClick={(e) => handleNavClick(e, 'channels')}
+          >
             <IconTv size={18} />
             <span>{navData.linkChannels || 'Channels List'}</span>
           </a>
-          <a href="#install" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+          <a 
+            href="/install" 
+            className={`mobile-nav-link ${currentRoute === 'install' ? 'active' : ''}`} 
+            onClick={(e) => handleNavClick(e, 'install')}
+          >
             <IconMonitor size={18} />
             <span>{navData.linkInstall || 'How To Install'}</span>
           </a>
-          <a href="/download-apps" target="_blank" rel="noopener noreferrer" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+          <a 
+            href="/download-apps" 
+            className={`mobile-nav-link ${currentRoute === 'download-apps' ? 'active' : ''}`} 
+            onClick={(e) => handleNavClick(e, 'download-apps')}
+          >
             <IconDownload size={18} />
             <span>{navData.linkApps || 'Download Apps'}</span>
           </a>
-          <a href="#footer" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+          <a 
+            href="/contact" 
+            className={`mobile-nav-link ${currentRoute === 'contact' ? 'active' : ''}`} 
+            onClick={(e) => handleNavClick(e, 'contact')}
+          >
             <IconHeadphones size={18} />
             <span>{navData.linkContact || 'Contact'}</span>
           </a>
@@ -221,18 +284,20 @@ export const Navbar = ({ onOpenOrderModal }) => {
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                className="mobile-lang-btn"
-                style={{ marginTop: '8px', width: '100%', justifyContent: 'center', color: '#fbbf24', borderColor: 'rgba(251,191,36,0.3)' }}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setShowIconModal(true);
-                }}
-              >
-                <span>⚙️</span>
-                <span>{currentLang === 'ar' ? 'تخصيص أيقونات اللغات' : currentLang === 'fr' ? 'Changer les icônes' : 'Customize Icons'}</span>
-              </button>
+              {isAdmin && (
+                <button
+                  type="button"
+                  className="mobile-lang-btn"
+                  style={{ marginTop: '8px', width: '100%', justifyContent: 'center', color: '#fbbf24', borderColor: 'rgba(251,191,36,0.3)' }}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setShowIconModal(true);
+                  }}
+                >
+                  <span>⚙️</span>
+                  <span>{currentLang === 'ar' ? 'تخصيص أيقونات اللغات' : currentLang === 'fr' ? 'Changer les icônes' : 'Customize Icons'}</span>
+                </button>
+              )}
             </div>
 
             <button 

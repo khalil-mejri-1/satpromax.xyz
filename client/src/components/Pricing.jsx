@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useContent } from '../context/ContentContext';
 import { AdminEditWrapper } from './AdminEditWrapper';
 import { IconCheck, IconZap, IconStar, IconFlame, IconShieldCheck, IconSparkles } from './Icons';
@@ -7,8 +7,29 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
   const { content } = useContent();
   const pricingData = content?.pricing || {};
 
-  const [connections, setConnections] = useState(1);
-  const [billingCycle, setBillingCycle] = useState('12m');
+  const categories = (pricingData.categories && pricingData.categories.length > 0)
+    ? pricingData.categories
+    : [
+    {
+      id: 'cat-1',
+      name: pricingData.connection1 || '1 Device (VIP)',
+      products: pricingData.plans || [],
+    },
+    {
+      id: 'cat-2',
+      name: pricingData.connection2 || '2 Devices (Family Pack)',
+      products: (pricingData.plans || []).map((p) => ({ ...p, price: Number((p.price * 1.6).toFixed(2)) })),
+    },
+    {
+      id: 'cat-3',
+      name: pricingData.connection3 || '3 Devices (Multi-Room)',
+      products: (pricingData.plans || []).map((p) => ({ ...p, price: Number((p.price * 2.2).toFixed(2)) })),
+    },
+  ];
+
+  const [activeCatId, setActiveCatId] = useState(() => {
+    return categories.length > 0 ? categories[0].id : 'cat-1';
+  });
 
   const currencySymbols = {
     USD: '$',
@@ -29,116 +50,54 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
   const currSymbol = currencySymbols[currentCurrency] || '$';
   const currRate = currencyRates[currentCurrency] || 1;
 
+  const activeCategory = categories.find((c) => c.id === activeCatId) || categories[0];
+  const currentProducts = activeCategory?.products || [];
+
   const formatPrice = (usdPrice) => {
     const numPrice = typeof usdPrice === 'number' ? usdPrice : parseFloat(usdPrice) || 0;
-    const converted = numPrice * currRate * (connections === 1 ? 1 : connections === 2 ? 1.6 : 2.2);
+    const converted = numPrice * currRate;
     return converted.toFixed(2);
   };
 
-  const plans = pricingData.plans || [
-    {
-      id: '1m',
-      title: '1 Month',
-      badge: 'Starter',
-      badgeClass: 'badge-starter',
-      price: 13.99,
-      period: '/ 1 Month',
-      popular: false,
-      savings: 'Standard Rate',
-      features: [
-        '19,000+ Live Channels',
-        '56,000+ VOD Movies & Series',
-        '4K / Ultra HD & FHD Quality',
-        'AntiFreeze™ 9.0 Technology',
-        'Electronic Program Guide (EPG)',
-        'Free Updates & Fast Activation',
-        '24/7 Dedicated Customer Support',
-        'All Devices Supported',
-      ],
-    },
-    {
-      id: '3m',
-      title: '3 Months',
-      badge: 'Save 30%',
-      badgeClass: 'badge-discount-subtle',
-      price: 26.99,
-      period: '/ 3 Months',
-      popular: false,
-      savings: 'Save $15.00',
-      features: [
-        '19,000+ Live Channels',
-        '56,000+ VOD Movies & Series',
-        '4K / Ultra HD & FHD Quality',
-        'AntiFreeze™ 9.0 Technology',
-        'Electronic Program Guide (EPG)',
-        'Free Updates & Fast Activation',
-        '24/7 Dedicated Customer Support',
-        '7-Days Catch-Up Replay',
-      ],
-    },
-    {
-      id: '6m',
-      title: '6 Months',
-      badge: 'Save 45%',
-      badgeClass: 'badge-discount-subtle',
-      price: 39.99,
-      period: '/ 6 Months',
-      popular: false,
-      savings: 'Save $43.95',
-      features: [
-        '19,000+ Live Channels',
-        '56,000+ VOD Movies & Series',
-        '4K / Ultra HD & FHD Quality',
-        'AntiFreeze™ 9.0 Technology',
-        'Electronic Program Guide (EPG)',
-        'Free Updates & Fast Activation',
-        '24/7 VIP Dedicated Support',
-        'PPV Events & Sports Passes',
-      ],
-    },
-    {
-      id: '12m',
-      title: '12 Months',
-      badge: '🔥 62% OFF - BEST VALUE',
-      badgeClass: 'badge-most-popular',
-      price: 59.99,
-      period: '/ 12 Months',
-      popular: true,
-      savings: 'Only $4.99/mo',
-      features: [
-        '19,000+ Live Channels in 4K/FHD',
-        '56,000+ VOD Movies & Series (Updated Daily)',
-        '4K / UHD / FHD / 60 FPS Streams',
-        'AntiFreeze™ 9.0 Zero-Buffer Server',
-        'Full EPG Electronic Program Guide',
-        'All International Sports & PPV Events',
-        'Instant Automated Activation',
-        '24/7 VIP WhatsApp & Live Chat Support',
-        '7-Day Money-Back Guarantee',
-      ],
-    },
-    {
-      id: '24m',
-      title: '24 Months',
-      badge: '75% OFF - SUPER SAVER',
-      badgeClass: 'badge-discount-gold',
-      price: 89.99,
-      period: '/ 24 Months',
-      popular: false,
-      savings: 'Only $3.74/mo',
-      features: [
-        '19,000+ Live Channels',
-        '56,000+ VOD Movies & Series',
-        '4K / UHD / FHD / 60 FPS Streams',
-        'AntiFreeze™ 9.0 Premium Server',
-        'Full EPG & Catch-Up TV',
-        'Free Stream Optimizer & VIP Line',
-        'Instant Automated Activation',
-        '24/7 Lifetime Priority Support',
-        '7-Day Money-Back Guarantee',
-      ],
-    },
-  ];
+  // Google SEO Schema.org JSON-LD Structured Data
+  const schemaJsonLd = useMemo(() => {
+    const allProducts = categories.flatMap((cat) =>
+      (cat.products || []).map((p) => ({
+        ...p,
+        categoryName: cat.name,
+      }))
+    );
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: pricingData.titleHighlight || 'SatProMax IPTV Subscription Plans',
+      description: pricingData.subtitle || 'All plans include our premium features and 24/7 support',
+      itemListElement: allProducts.map((p, idx) => {
+        const itemObj = {
+          '@type': 'Product',
+          name: p.seoTitle || p.title,
+          description: p.seoDescription || (p.features || []).join('. '),
+          category: p.categoryName,
+          offers: {
+            '@type': 'Offer',
+            priceCurrency: currentCurrency || 'USD',
+            price: formatPrice(p.price),
+            availability: 'https://schema.org/InStock',
+            priceValidUntil: '2028-12-31',
+          },
+        };
+        if (p.seoKeywords) {
+          itemObj.keywords = p.seoKeywords;
+        }
+        return {
+          '@type': 'ListItem',
+          position: idx + 1,
+          item: itemObj,
+        };
+      }),
+    };
+  }, [categories, pricingData, currentCurrency, currRate]);
 
   return (
     <AdminEditWrapper sectionKey="pricing" sectionTitle="Tarifs & Forfaits">
@@ -157,37 +116,26 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
             </p>
           </div>
 
-          {/* Connection Selector Toggle */}
+          {/* Categories Selector Bar (Affichage des Catégories en Haut) */}
           <div className="connections-selector-box">
-            <span className="selector-label">{pricingData.selectDevicesLabel || 'Select Active Devices:'}</span>
+            <span className="selector-label">{pricingData.selectDevicesLabel || 'Active Devices / Connections:'}</span>
             <div className="connections-btn-group">
-              <button 
-                type="button" 
-                className={`conn-btn ${connections === 1 ? 'active' : ''}`}
-                onClick={() => setConnections(1)}
-              >
-                {pricingData.connection1 || '1 Device / Connection'}
-              </button>
-              <button 
-                type="button" 
-                className={`conn-btn ${connections === 2 ? 'active' : ''}`}
-                onClick={() => setConnections(2)}
-              >
-                {pricingData.connection2 || '2 Devices (Family Pack)'}
-              </button>
-              <button 
-                type="button" 
-                className={`conn-btn ${connections === 3 ? 'active' : ''}`}
-                onClick={() => setConnections(3)}
-              >
-                {pricingData.connection3 || '3 Devices (Multi-Room)'}
-              </button>
+              {categories.map((cat) => (
+                <button 
+                  key={cat.id} 
+                  type="button" 
+                  className={`conn-btn ${activeCatId === cat.id ? 'active' : ''}`}
+                  onClick={() => setActiveCatId(cat.id)}
+                >
+                  {cat.name}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Pricing Cards Grid */}
+          {/* Pricing / Products Cards Grid (Affichage des Produits en Bas) */}
           <div className="pricing-cards-grid">
-            {plans.map((plan, idx) => {
+            {currentProducts.map((plan, idx) => {
               const formatted = formatPrice(plan.price);
               const badgeClass = plan.popular ? 'badge-most-popular' : idx === 4 ? 'badge-discount-gold' : 'badge-discount-subtle';
               return (
@@ -205,7 +153,7 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
                   {/* Plan Header */}
                   <div className="card-header">
                     <h3 className="plan-title">{plan.title}</h3>
-                    <div className="plan-savings-tag">{plan.savings}</div>
+                    {plan.savings && <div className="plan-savings-tag">{plan.savings}</div>}
                   </div>
 
                   {/* Price Display */}
@@ -221,7 +169,7 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
                     className={`btn-order-plan ${plan.popular ? 'btn-order-featured' : ''}`}
                     onClick={() => onOpenOrderModal({
                       plan: plan.id,
-                      title: `${plan.title} Plan (${connections} Connection${connections > 1 ? 's' : ''})`,
+                      title: `${plan.title} (${activeCategory?.name || 'Abonnement'})`,
                       price: `${currSymbol}${formatted}`,
                     })}
                   >
@@ -231,7 +179,7 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
 
                   {/* Features List */}
                   <div className="card-features-list">
-                    <p className="features-title">{pricingData.whatsIncluded || "What's included:"}</p>
+                    <p className="features-title">{pricingData.whatsIncluded || "WHAT'S INCLUDED:"}</p>
                     {(plan.features || []).map((feat, i) => (
                       <div key={i} className="feature-row">
                         <span className="feature-check-icon">
@@ -242,15 +190,29 @@ export const Pricing = ({ onOpenOrderModal, currentCurrency = 'USD' }) => {
                     ))}
                   </div>
 
-                  {/* Guarantee badge */}
-                  <div className="card-footer-guarantee">
+                  {/* Guarantee footer note */}
+                  <div className="card-guarantee-note">
                     <IconShieldCheck size={14} />
-                    <span>{pricingData.guaranteeBadge || '7-Day Money Back Guarantee'}</span>
+                    <span>{pricingData.guaranteeNote || '7-Day Money-Back Guarantee'}</span>
+                  </div>
+
+                  {/* Hidden SEO Metadata for Crawlers & Search Engines (Invisible to visitors) */}
+                  <div className="visually-hidden-seo" aria-hidden="true">
+                    <h4>{plan.seoTitle || plan.title}</h4>
+                    <p>{plan.seoDescription || (plan.features || []).join(', ')}</p>
+                    {plan.seoKeywords && <span>{plan.seoKeywords}</span>}
+                    <span>{currSymbol}{formatted} {plan.period}</span>
                   </div>
                 </div>
               );
             })}
           </div>
+
+          {/* Google SEO Schema.org JSON-LD (Invisible to visitors, parsed by search engine crawlers) */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJsonLd) }}
+          />
 
           {/* Bottom Payment Trust Bar */}
           <div className="pricing-trust-bar">

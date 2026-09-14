@@ -95,7 +95,7 @@ export const FaqSection = ({ onOpenOrderModal }) => {
               </div>
             </div>
             <a 
-              href={`https://wa.me/${(content?.footer?.whatsappPhone || '+15551234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(content?.footer?.whatsappDefaultMsg || 'Hello IPPLAY TV Support, I have a question about IPTV')}`}
+              href={`https://wa.me/${(content?.footer?.whatsappPhone || '+15551234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(content?.footer?.whatsappDefaultMsg || 'Hello SatProMax Support, I have a question about IPTV')}`}
               target="_blank" 
               rel="noopener noreferrer" 
               className="btn-contact-support"

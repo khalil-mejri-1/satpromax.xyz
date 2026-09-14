@@ -48,6 +48,7 @@ const ConfirmModalInner = ({ modal, onClose }) => {
 
   const [copiedCode, setCopiedCode] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
+  const [uploadingFileKey, setUploadingFileKey] = useState(null);
   const firstInputRef = useRef(null);
 
   // Focus first input on mount
@@ -278,6 +279,79 @@ const ConfirmModalInner = ({ modal, onClose }) => {
                           className="btn-clear-preview"
                           onClick={() => handleInputChange(f.key, '')}
                           title="Supprimer l'image"
+                        >
+                          ✕ Retirer
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : f.type === 'file' ? (
+                  <div className="confirm-file-uploader-control">
+                    <div className="confirm-file-input-row">
+                      <input
+                        type="text"
+                        className={`confirm-form-input ${fieldErrors[f.key] ? 'input-error' : ''}`}
+                        placeholder={f.placeholder || "Collez le lien URL ou choisissez un fichier du PC..."}
+                        value={formValues[f.key] || ''}
+                        onChange={(e) => handleInputChange(f.key, e.target.value)}
+                        ref={idx === 0 ? firstInputRef : null}
+                      />
+                      <label 
+                        className={`btn-upload-local-file btn-upload-app-file ${uploadingFileKey === f.key ? 'uploading' : ''}`} 
+                        title="Choisir un fichier APK, ZIP ou Application depuis votre ordinateur"
+                      >
+                        {uploadingFileKey === f.key ? '⏳ Chargement...' : '📁 Choisir du PC'}
+                        <input
+                          type="file"
+                          accept=".apk,.xapk,.zip,.exe,.dmg,.pkg,.rar,.tar,.gz,application/*"
+                          style={{ display: 'none' }}
+                          disabled={uploadingFileKey === f.key}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+                            setUploadingFileKey(f.key);
+                            const reader = new FileReader();
+                            reader.onload = (uploadEvent) => {
+                              handleInputChange(f.key, uploadEvent.target.result);
+                              handleInputChange('fileName', file.name);
+                              handleInputChange('fileSize', `${sizeMB} MB`);
+                              setUploadingFileKey(null);
+                            };
+                            reader.onerror = () => {
+                              alert("Erreur lors de la lecture du fichier.");
+                              setUploadingFileKey(null);
+                            };
+                            reader.readAsDataURL(file);
+                          }}
+                        />
+                      </label>
+                    </div>
+
+                    {formValues[f.key] && formValues[f.key] !== '#' && (
+                      <div className="confirm-file-preview-badge">
+                        <div className="confirm-file-icon-box">
+                          {String(formValues[f.key]).startsWith('data:') ? '📦' : '🔗'}
+                        </div>
+                        <div className="confirm-file-info">
+                          <strong className="confirm-file-name">
+                            {formValues.fileName || (String(formValues[f.key]).startsWith('data:') ? 'Fichier Application local' : formValues[f.key])}
+                          </strong>
+                          <span className="confirm-file-status">
+                            {String(formValues[f.key]).startsWith('data:') 
+                              ? `✅ Fichier chargé depuis le PC (${formValues.fileSize || 'Prêt au téléchargement direct'})` 
+                              : '🔗 Lien direct externe configuré'}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="btn-clear-preview"
+                          onClick={() => {
+                            handleInputChange(f.key, '#');
+                            handleInputChange('fileName', '');
+                            handleInputChange('fileSize', '');
+                          }}
+                          title="Retirer ce fichier"
                         >
                           ✕ Retirer
                         </button>

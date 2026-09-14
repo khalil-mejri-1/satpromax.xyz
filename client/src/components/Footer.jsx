@@ -3,9 +3,16 @@ import { useContent } from '../context/ContentContext';
 import { AdminEditWrapper } from './AdminEditWrapper';
 import { IconTv, IconShieldCheck, IconZap, IconStar, IconHeadphones } from './Icons';
 
-export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
+export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer, currentRoute, onNavigate }) => {
   const { content, isAdmin, openAdminLogin } = useContent();
   const footerData = content?.footer || {};
+
+  const handleLinkClick = (e, route) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(route);
+    }
+  };
 
   return (
     <AdminEditWrapper sectionKey="footer" sectionTitle="الفوتر وحقوق النشر (Footer)">
@@ -15,7 +22,12 @@ export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
           <div className="footer-grid">
             {/* Col 1: Brand & Bio */}
             <div className="footer-brand-col">
-              <a href="#" className="footer-logo-link" aria-label="SatProMax Home">
+              <a 
+                href="/" 
+                className="footer-logo-link" 
+                aria-label="SatProMax Home"
+                onClick={(e) => handleLinkClick(e, 'home')}
+              >
                 <img src="/satpromax-logo.png" alt="SatProMax Logo" className="site-footer-logo-img" />
               </a>
               <p className="footer-brand-desc">
@@ -35,12 +47,12 @@ export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
             <div className="footer-nav-col">
               <h4 className="footer-col-title">{footerData.navColTitle || 'Navigation'}</h4>
               <ul className="footer-links-list">
-                <li><a href="#pricing">{footerData.navPricing || 'Pricing Plans'}</a></li>
-                <li><a href="#channels">{footerData.navChannels || 'Live Channels List'}</a></li>
-                <li><a href="#vod">{footerData.navVod || 'Movies & TV Series VOD'}</a></li>
-                <li><a href="#devices">{footerData.navDevices || 'Supported Devices'}</a></li>
-                <li><a href="#install">{footerData.navInstall || 'Installation Guides'}</a></li>
-                <li><a href="#contact">{footerData.navContact || 'Contact & FAQ'}</a></li>
+                <li><a href="/pricing" onClick={(e) => handleLinkClick(e, 'pricing')}>{footerData.navPricing || 'Pricing Plans'}</a></li>
+                <li><a href="/channels" onClick={(e) => handleLinkClick(e, 'channels')}>{footerData.navChannels || 'Live Channels List'}</a></li>
+                <li><a href="/vod" onClick={(e) => handleLinkClick(e, 'vod')}>{footerData.navVod || 'Movies & TV Series VOD'}</a></li>
+                <li><a href="/devices" onClick={(e) => handleLinkClick(e, 'devices')}>{footerData.navDevices || 'Supported Devices'}</a></li>
+                <li><a href="/install" onClick={(e) => handleLinkClick(e, 'install')}>{footerData.navInstall || 'Installation Guides'}</a></li>
+                <li><a href="/contact" onClick={(e) => handleLinkClick(e, 'contact')}>{footerData.navContact || 'Contact & FAQ'}</a></li>
               </ul>
             </div>
 
@@ -48,12 +60,12 @@ export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
             <div className="footer-nav-col">
               <h4 className="footer-col-title">{footerData.packagesColTitle || 'Top Packages'}</h4>
               <ul className="footer-links-list">
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgBein || 'beIN Sports & UEFA Pass'}</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgUsaUk || 'USA & UK Entertainment'}</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgCinema || '4K Cinema & HBO VOD'}</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgPpv || 'PPV Boxing & UFC Events'}</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgArabic || 'Arabic & European Feeds'}</a></li>
-                <li><a href="#channels" onClick={onOpenChannelExplorer}>{footerData.pkgKids || 'Kids & Family Channels'}</a></li>
+                <li><a href="/channels" onClick={(e) => { handleLinkClick(e, 'channels'); if (onOpenChannelExplorer) onOpenChannelExplorer(); }}>{footerData.pkgBein || 'beIN Sports & UEFA Pass'}</a></li>
+                <li><a href="/channels" onClick={(e) => { handleLinkClick(e, 'channels'); if (onOpenChannelExplorer) onOpenChannelExplorer(); }}>{footerData.pkgUsaUk || 'USA & UK Entertainment'}</a></li>
+                <li><a href="/channels" onClick={(e) => { handleLinkClick(e, 'channels'); if (onOpenChannelExplorer) onOpenChannelExplorer(); }}>{footerData.pkgCinema || '4K Cinema & HBO VOD'}</a></li>
+                <li><a href="/channels" onClick={(e) => { handleLinkClick(e, 'channels'); if (onOpenChannelExplorer) onOpenChannelExplorer(); }}>{footerData.pkgPpv || 'PPV Boxing & UFC Events'}</a></li>
+                <li><a href="/channels" onClick={(e) => { handleLinkClick(e, 'channels'); if (onOpenChannelExplorer) onOpenChannelExplorer(); }}>{footerData.pkgArabic || 'Arabic & European Feeds'}</a></li>
+                <li><a href="/channels" onClick={(e) => { handleLinkClick(e, 'channels'); if (onOpenChannelExplorer) onOpenChannelExplorer(); }}>{footerData.pkgKids || 'Kids & Family Channels'}</a></li>
               </ul>
             </div>
 
@@ -84,11 +96,11 @@ export const Footer = ({ onOpenOrderModal, onOpenChannelExplorer }) => {
               {footerData.copyrightText || `© ${new Date().getFullYear()} SatProMax. All rights reserved. Premium IPTV & VOD Streaming Service.`}
             </p>
             <div className="footer-legal-links">
-              <a href="#terms">{footerData.termsLink || 'Terms of Service'}</a>
+              <a href="/terms" onClick={(e) => handleLinkClick(e, 'terms')}>{footerData.termsLink || 'Terms of Service'}</a>
               <span className="dot-divider">•</span>
-              <a href="#privacy">{footerData.privacyLink || 'Privacy Policy'}</a>
+              <a href="/privacy" onClick={(e) => handleLinkClick(e, 'privacy')}>{footerData.privacyLink || 'Privacy Policy'}</a>
               <span className="dot-divider">•</span>
-              <a href="#refund">{footerData.refundLink || 'Refund Policy'}</a>
+              <a href="/refund" onClick={(e) => handleLinkClick(e, 'refund')}>{footerData.refundLink || 'Refund Policy'}</a>
               <span className="dot-divider">•</span>
               <button 
                 type="button" 
