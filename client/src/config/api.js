@@ -15,6 +15,11 @@ export const API_BASE_URL = BACKEND_URL;
 export const API_ENDPOINTS = {
   content: `${BACKEND_URL}/api/content`,
   vetrine: `${BACKEND_URL}/api/vetrine`,
+  liveCategories: `${BACKEND_URL}/api/live-channels/categories`,
+  liveChannels: `${BACKEND_URL}/api/live-channels`,
+  syncLiveChannels: `${BACKEND_URL}/api/live-channels/sync`,
+  categoryCrud: `${BACKEND_URL}/api/live-channels/category`,
+  channelCrud: `${BACKEND_URL}/api/live-channels/channel`,
 };
 
 export default BACKEND_URL;

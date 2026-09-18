@@ -3,6 +3,7 @@ import { useContent } from '../context/ContentContext';
 import { API_ENDPOINTS } from '../config/api';
 import { SiteSettingsView } from './SiteSettingsView';
 import { PagesListView } from './PagesListView';
+import { AdminChannelsManager } from './AdminChannelsManager';
 import { 
   IconCheck, 
   IconZap, 
@@ -590,6 +591,15 @@ export const AdminDashboard = ({ onNavigateHome }) => {
           >
             <span className="nav-icon">⚙️</span>
             <span className="nav-label">Paramètres de Site</span>
+          </button>
+
+          <button 
+            type="button" 
+            className={`sidebar-nav-item ${activeTab === 'channels' ? 'active' : ''}`}
+            onClick={() => setActiveTab('channels')}
+          >
+            <span className="nav-icon">📺</span>
+            <span className="nav-label">Chaînes en Direct</span>
           </button>
 
           {/* SECTION CONTENU (Matching Image 1) */}
@@ -1236,6 +1246,13 @@ export const AdminDashboard = ({ onNavigateHome }) => {
             saveToServer={saveToServer} 
             isSaving={isSaving} 
             triggerNotification={triggerNotification} 
+          />
+        ) : activeTab === 'channels' ? (
+          /* ====================================================
+             LIVE CHANNELS & CATEGORIES VIEW
+             ==================================================== */
+          <AdminChannelsManager 
+            showConfirm={showConfirm}
           />
         ) : (
           /* ====================================================

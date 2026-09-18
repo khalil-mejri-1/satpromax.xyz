@@ -1,0 +1,742 @@
+/* ==========================================================================
+   Channels Explorer Page (Netfly Replica with SatProMax Luxury Harmony)
+   ========================================================================== */
+
+.channels-explorer-page {
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 15% 0%, rgba(190, 0, 0, 0.22) 0%, rgba(190, 0, 0, 0) 45%),
+    radial-gradient(circle at 88% 18%, rgba(115, 0, 0, 0.28) 0%, rgba(115, 0, 0, 0) 40%),
+    linear-gradient(180deg, #120505 0%, #090303 35%, #050202 100%);
+  color: #f7f2f2;
+  font-family: inherit;
+  padding-bottom: 70px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* RTL / LTR Helpers */
+.channels-explorer-page.dir-rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.channels-explorer-page.dir-ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* ----------------------------------------------------
+   1. Sticky Top Navigation Bar
+   ---------------------------------------------------- */
+.channels-explorer-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 3, 3, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(80, 20, 20, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.channels-topbar-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(49, 20, 20, 0.5);
+  border: 1px solid rgba(80, 20, 20, 0.6);
+  color: #f0e6e6;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-back-home:hover {
+  background: rgba(193, 12, 12, 0.25);
+  border-color: #e03b3b;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.back-arrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn-back-home:hover .back-arrow {
+  transform: translateX(-3px);
+}
+
+.channels-explorer-page.dir-rtl .btn-back-home:hover .back-arrow {
+  transform: translateX(3px);
+}
+
+.topbar-branding {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(20, 7, 7, 0.6);
+  padding: 6px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(166, 12, 12, 0.3);
+}
+
+.live-dot-pulse {
+  width: 9px;
+  height: 9px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #22c55e;
+  animation: pulseGreen 1.8s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.topbar-channels-count {
+  font-size: 13.5px;
+  color: #e8dada;
+}
+
+.topbar-channels-count strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.btn-topbar-order {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #e50914 0%, #b80710 100%);
+  color: #fff;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.35);
+  transition: all 0.25s ease;
+}
+
+.btn-topbar-order:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(229, 9, 20, 0.55);
+  background: linear-gradient(135deg, #ff1a25 0%, #d10813 100%);
+}
+
+/* ----------------------------------------------------
+   2. Main Layout & Hero Header
+   ---------------------------------------------------- */
+.channels-explorer-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 24px 0;
+}
+
+.channels-hero-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.channels-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(229, 9, 20, 0.12);
+  border: 1px solid rgba(229, 9, 20, 0.35);
+  color: #ff6b6b;
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.channels-hero-title {
+  font-size: clamp(30px, 4.5vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px 0;
+  background: linear-gradient(180deg, #ffffff 30%, #e2c0c0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.channels-hero-subtitle {
+  font-size: clamp(14px, 1.8vw, 17px);
+  color: #c4b6b6;
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ----------------------------------------------------
+   3. Search Bar matching Netfly
+   ---------------------------------------------------- */
+.channels-search-bar-wrapper {
+  max-width: 1000px;
+  margin: 0 auto 28px;
+}
+
+.channels-search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(9, 3, 3, 0.85);
+  border: 1px solid #311414;
+  border-radius: 14px;
+  padding: 4px 18px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+}
+
+.channels-search-bar:focus-within {
+  border-color: #e50914;
+  box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.18), 0 12px 35px rgba(0, 0, 0, 0.5);
+}
+
+.channels-search-bar .search-icon {
+  color: #7a4444;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.channels-search-bar:focus-within .search-icon {
+  color: #e50914;
+}
+
+.channels-search-bar .search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #f7f2f2;
+  font-size: 16px;
+  padding: 14px 14px;
+  outline: none;
+  font-family: inherit;
+  caret-color: #e50914;
+}
+
+.channels-search-bar .search-input::placeholder {
+  color: #6b4040;
+}
+
+.search-clear-btn {
+  background: rgba(193, 12, 12, 0.2);
+  border: none;
+  color: #e0b4b4;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-clear-btn:hover {
+  background: #e50914;
+  color: #fff;
+}
+
+.search-results-pill {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: #ff8c8c;
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------
+   4. Channels Board (2-Column Grid)
+   ---------------------------------------------------- */
+.channels-board-layout {
+  display: grid;
+  grid-template-columns: minmax(210px, 290px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.channels-explorer-page.dir-rtl .channels-board-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 290px);
+}
+
+/* Sidebar Categories Panel */
+.categories-sidebar-panel {
+  background: rgba(9, 3, 3, 0.88);
+  border: 1px solid #311414;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: sticky;
+  top: 85px;
+  max-height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 18px 0;
+}
+
+.categories-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 14px;
+  border-bottom: 1px solid #3a1d1d;
+}
+
+.categories-panel-header .panel-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  color: #fff;
+}
+
+.panel-count-badge {
+  background: rgba(166, 12, 12, 0.3);
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(229, 9, 20, 0.3);
+}
+
+.category-scroll-list {
+  overflow-y: auto;
+  padding: 10px 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.category-scroll-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-scroll-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a60c0c, #f52222);
+  border-radius: 6px;
+}
+
+.category-item-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 14px;
+  color: #d8cccc;
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.channels-explorer-page.dir-rtl .category-item-btn {
+  text-align: right;
+}
+
+.category-item-btn:hover {
+  background: rgba(193, 12, 12, 0.2);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.channels-explorer-page.dir-rtl .category-item-btn:hover {
+  transform: translateX(-2px);
+}
+
+.category-item-btn.active {
+  background: linear-gradient(90deg, rgba(193, 12, 12, 0.25), rgba(193, 12, 12, 0.45));
+  box-shadow: inset 4px 0 #e50914;
+  color: #fff;
+  font-weight: 700;
+}
+
+.channels-explorer-page.dir-rtl .category-item-btn.active {
+  box-shadow: inset -4px 0 #e50914;
+}
+
+.category-item-btn .cat-count {
+  font-size: 12px;
+  color: #9f8383;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+.category-item-btn.active .cat-count {
+  color: #ffd2d2;
+  background: rgba(229, 9, 20, 0.35);
+}
+
+/* ----------------------------------------------------
+   5. Main Content Panel & Group Cards
+   ---------------------------------------------------- */
+.channels-content-panel {
+  background: rgba(9, 3, 3, 0.88);
+  border: 1px solid #311414;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 24px;
+  min-height: 500px;
+}
+
+/* Empty State */
+.channels-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #c4b6b6;
+}
+
+.channels-empty-state .empty-icon {
+  color: #7a3a3a;
+  margin-bottom: 16px;
+}
+
+.channels-empty-state h3 {
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.channels-empty-state p {
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.btn-reset-filter {
+  background: #e50914;
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-reset-filter:hover {
+  background: #ff1a25;
+}
+
+/* Groups Container */
+.groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.channel-group-card {
+  background: #0f0404;
+  border: 1px solid #3a1d1d;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+
+.channel-group-card:hover {
+  border-color: rgba(229, 9, 20, 0.4);
+}
+
+.group-header-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: #1a0808;
+  border: none;
+  padding: 14px 18px;
+  cursor: pointer;
+  text-align: left;
+  gap: 12px;
+  transition: background 0.2s ease;
+}
+
+.channels-explorer-page.dir-rtl .group-header-btn {
+  text-align: right;
+}
+
+.group-header-btn:hover {
+  background: #240b0b;
+}
+
+.group-header-accent {
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, #e50914, #ff5e5e);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.group-title-text {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+}
+
+.group-count-pill {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #c4b6b6;
+}
+
+.group-chevron-icon {
+  margin-left: auto;
+  color: #d9caca;
+  display: flex;
+  align-items: center;
+  transition: transform 0.25s ease;
+}
+
+.channels-explorer-page.dir-rtl .group-chevron-icon {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.group-chevron-icon.open {
+  transform: rotate(180deg);
+}
+
+.group-channels-body {
+  padding: 16px;
+  border-top: 1px solid #281111;
+  background: #0a0303;
+}
+
+/* ----------------------------------------------------
+   6. Channel Cards Grid matching Netfly
+   ---------------------------------------------------- */
+.channel-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 12px;
+}
+
+.channel-entry-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(49, 20, 20, 0.35) 0%, rgba(13, 6, 6, 0.92) 100%);
+  border: 1px solid #392020;
+  border-radius: 10px;
+  padding: 11px 14px;
+  min-height: 68px;
+  transition: all 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.channel-entry-card:hover {
+  border-color: #e50914;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(229, 9, 20, 0.15);
+  background: linear-gradient(180deg, rgba(75, 25, 25, 0.5) 0%, rgba(20, 8, 8, 0.95) 100%);
+}
+
+.channel-logo-wrapper {
+  width: 46px;
+  height: 46px;
+  background: #220e0e;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(80, 30, 30, 0.5);
+  overflow: hidden;
+}
+
+.channel-img-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.channel-logo-fallback {
+  color: #a85858;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.channel-info-wrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.channel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.channel-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag-pill-live {
+  background: #fc0;
+  color: #171717;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tag-pill-premium {
+  background: linear-gradient(135deg, #e50914, #b80710);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.tag-pill-adult {
+  background: #af0000;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ----------------------------------------------------
+   7. Bottom Promo CTA Banner
+   ---------------------------------------------------- */
+.channels-bottom-cta {
+  margin-top: 36px;
+  background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.25) 0%, rgba(20, 7, 7, 0.95) 75%);
+  border: 1px solid rgba(229, 9, 20, 0.4);
+  border-radius: 16px;
+  padding: 36px 28px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.cta-sparkle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(229, 9, 20, 0.2);
+  border: 1px solid rgba(229, 9, 20, 0.4);
+  color: #ff7575;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.cta-title {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 10px;
+}
+
+.cta-desc {
+  font-size: 15px;
+  color: #d1bebe;
+  max-width: 620px;
+  margin: 0 auto 22px;
+  line-height: 1.6;
+}
+
+.btn-channels-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #e50914 0%, #b80710 100%);
+  color: #fff;
+  border: none;
+  padding: 13px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 25px rgba(229, 9, 20, 0.45);
+  transition: all 0.25s ease;
+}
+
+.btn-channels-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 35px rgba(229, 9, 20, 0.65);
+  background: linear-gradient(135deg, #ff1a25 0%, #d10813 100%);
+}
+
+/* ----------------------------------------------------
+   8. Responsive Design
+   ---------------------------------------------------- */
+@media (max-width: 1024px) {
+  .channels-board-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .categories-sidebar-panel {
+    display: none; /* Can be opened via mobile filter or search */
+  }
+}
+
+@media (max-width: 768px) {
+  .channels-explorer-main {
+    padding: 24px 16px 0;
+  }
+  .channel-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .channels-content-panel {
+    padding: 16px 12px;
+  }
+  .group-title-text {
+    font-size: 17px;
+  }
+  .topbar-branding {
+    display: none;
+  }
+}

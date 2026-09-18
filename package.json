@@ -1,0 +1,11 @@
+{
+  "name": "satpromax-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "build:client": "npm run build --prefix client",
+    "start": "node server/index.js"
+  }
+}

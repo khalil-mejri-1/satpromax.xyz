@@ -583,7 +583,9 @@ export const ContentProvider = ({ children }) => {
         }
       }
     } catch (err) {
-      console.error('Error fetching orders:', err);
+      if (!silent) {
+        console.warn('Backend server unreachable for orders:', err?.message || err);
+      }
     } finally {
       if (!silent) setIsLoadingOrders(false);
     }

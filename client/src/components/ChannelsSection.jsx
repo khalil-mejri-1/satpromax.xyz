@@ -127,7 +127,7 @@ export const ChannelsSection = ({ onOpenChannelExplorer }) => {
                 className="btn-view-full-list"
                 onClick={onOpenChannelExplorer}
               >
-                {channelsData.btnBrowse || 'Browse Full Channel Database'}
+                {channelsData.btnBrowse || 'Explorer la Liste des Chaînes'}
               </button>
             </div>
           </div>

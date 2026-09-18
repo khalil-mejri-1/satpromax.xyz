@@ -24,6 +24,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { SectionEditModal } from './components/SectionEditModal';
 import { ConfirmModal } from './components/ConfirmModal';
 import { LegalPage } from './components/pages/LegalPage';
+import { ChannelsListPage } from './components/ChannelsListPage';
 import './App.css';
 
 function App() {
@@ -48,12 +49,13 @@ function App() {
     return 'home';
   });
 
-  // Dedicated page view mode ('home' | 'download-apps' | 'admin-dashboard' | 'terms' | 'privacy' | 'refund')
+  // Dedicated page view mode ('home' | 'download-apps' | 'admin-dashboard' | 'channels-list' | 'terms' | 'privacy' | 'refund')
   const [currentRoute, setCurrentRoute] = useState(() => {
     if (typeof window !== 'undefined') {
       const p = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
       if (p.includes('admin/dashboard') || p.includes('dashboard')) return 'admin-dashboard';
       if (p.includes('download-apps') || p.includes('download') || p.includes('apps')) return 'download-apps';
+      if (p === '/channels-list' || p === '/all-channels') return 'channels-list';
       if (p === '/terms' || p === '/privacy' || p === '/refund') return p.slice(1);
     }
     return 'home';
@@ -135,6 +137,8 @@ function App() {
         setCurrentRoute('admin-dashboard');
       } else if (p.includes('download-apps') || p.includes('download') || p.includes('apps')) {
         setCurrentRoute('download-apps');
+      } else if (p === '/channels-list' || p === '/all-channels') {
+        setCurrentRoute('channels-list');
       } else if (p === '/terms' || p === '/privacy' || p === '/refund') {
         setCurrentRoute(p.slice(1));
       } else {
@@ -269,6 +273,13 @@ function App() {
       return;
     }
 
+    if (route === 'channels-list' || route === 'channels-explorer') {
+      window.history.pushState({}, '', '/channels-list');
+      setCurrentRoute('channels-list');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (route === 'terms' || route === 'privacy' || route === 'refund') {
       window.history.pushState({}, '', `/${route}`);
       setCurrentRoute(route);
@@ -296,7 +307,14 @@ function App() {
   };
 
   const handleOpenChannelExplorer = () => {
-    setChannelExplorerOpen(true);
+    try {
+      const w = window.open('/channels-list', '_blank');
+      if (!w || w.closed || typeof w.closed === 'undefined') {
+        navigateTo('channels-list');
+      }
+    } catch (e) {
+      navigateTo('channels-list');
+    }
   };
 
   const handleCloseChannelExplorer = () => {
@@ -309,7 +327,7 @@ function App() {
       <AdminBar onNavigateDashboard={() => navigateTo('admin-dashboard')} />
 
       {/* 1. Header & Navigation (Shown on normal pages) */}
-      {currentRoute !== 'admin-dashboard' && (
+      {currentRoute !== 'admin-dashboard' && currentRoute !== 'channels-list' && (
         <Navbar 
           currentRoute={currentRoute === 'home' ? activeSection : currentRoute}
           onNavigate={navigateTo}
@@ -318,7 +336,7 @@ function App() {
         />
       )}
 
-      {/* Main Content flow: Dashboard OR Download Apps Page OR Legal Pages OR Main Landing Flow */}
+      {/* Main Content flow: Dashboard OR Download Apps Page OR Channels List OR Legal Pages OR Main Landing Flow */}
       {currentRoute === 'admin-dashboard' ? (
         <main className="main-content-flow admin-dashboard-page-mode">
           <AdminDashboard onNavigateHome={() => navigateTo('home')} />
@@ -328,6 +346,13 @@ function App() {
           <DownloadAppsPage 
             onOpenOrderModal={handleOpenOrderModal}
             onNavigateHome={() => navigateTo('home')}
+          />
+        </main>
+      ) : currentRoute === 'channels-list' ? (
+        <main className="main-content-flow channels-page-mode">
+          <ChannelsListPage 
+            onNavigateHome={() => navigateTo('home')}
+            onOpenOrderModal={handleOpenOrderModal}
           />
         </main>
       ) : (currentRoute === 'terms' || currentRoute === 'privacy' || currentRoute === 'refund') ? (
