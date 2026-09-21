@@ -8,7 +8,7 @@ import {
   IconPlus,
   IconTrash
 } from './Icons';
-
+import { PaymentLogo, DEFAULT_PAYMENT_METHODS } from './PaymentLogos';
 
 export const SiteSettingsView = ({ 
   content, 
@@ -20,8 +20,8 @@ export const SiteSettingsView = ({
   const footerData = content?.footer || {};
 
   const cleanMethods = (methods) => {
-    if (!Array.isArray(methods)) return [];
-    return methods.filter(m => m && m.id !== 'card' && m.id !== 'paypal' && m.id !== 'crypto');
+    if (!Array.isArray(methods) || methods.length === 0) return DEFAULT_PAYMENT_METHODS;
+    return methods.filter(Boolean);
   };
 
   // Form local state
@@ -36,9 +36,23 @@ export const SiteSettingsView = ({
     chatStartBtn: footerData.chatStartBtn || 'Démarrer la discussion WhatsApp',
     guaranteeTitle: footerData.guaranteeTitle || '7-Day Money Back Guarantee',
     guaranteeDesc: footerData.guaranteeDesc || '100% risk-free trial with instant money-back protection.',
-    paymentLabel: footerData.paymentLabel || content?.modals?.paymentLabel || 'Select Payment Method:',
+    paymentLabel: content?.paymentLabel || content?.modals?.paymentLabel || footerData.paymentLabel || 'Mode de paiement *',
     securityText: footerData.securityText || content?.modals?.securityText || '256-Bit SSL Encrypted • 7-Day Money-Back Guarantee',
     paymentMethods: cleanMethods(content?.paymentMethods || footerData.paymentMethods || []),
+
+    // Success Message fields
+    orderSuccessTitle: content?.modals?.successTitle || "Commande d'abonnement envoyée !",
+    orderSuccessDesc: content?.modals?.successDesc || "Merci ! Une confirmation d'activation avec vos identifiants M3U & Xtream Codes a été envoyée à",
+    orderServerUrl: content?.modals?.serverUrl || "http://line.satpromax.me",
+    orderStatusActive: content?.modals?.statusActive || "Actif (Ligne VIP 24/7)",
+    orderSetupGuide: content?.modals?.setupGuideValue || "Sent for {device}",
+    orderWhatsappBtnText: content?.modals?.btnWhatsappConfirm || "Confirmer via Chat WhatsApp Instantané",
+    orderWhatsappMsg: content?.modals?.whatsappOrderMsg || "Bonjour SatProMax, je viens de finaliser ma commande pour l'email {email}",
+    orderDoneBtnText: content?.modals?.btnDone || "Terminé",
+
+    // Free Trial Navbar fields
+    btnFreeTrial: content?.navbar?.btnFreeTrial || "Test Gratuit 24h",
+    freeTrialWhatsappMsg: content?.navbar?.freeTrialWhatsappMsg || "Bonjour SatProMax, je souhaite demander un test gratuit de 24 heures pour tester votre service IPTV s'il vous plaît.",
   });
 
   const [newMethodName, setNewMethodName] = useState('');
@@ -48,22 +62,32 @@ export const SiteSettingsView = ({
 
   // Sync state if external content updates
   useEffect(() => {
-    if (content?.footer) {
+    if (content) {
       setFormData((prev) => ({
         ...prev,
-        whatsappPhone: content.footer.whatsappPhone || prev.whatsappPhone,
-        whatsappDefaultMsg: content.footer.whatsappDefaultMsg || prev.whatsappDefaultMsg,
-        supportPillText: content.footer.supportPillText || prev.supportPillText,
-        chatSupportTitle: content.footer.chatSupportTitle || prev.chatSupportTitle,
-        chatOnlineStatus: content.footer.chatOnlineStatus || prev.chatOnlineStatus,
-        chatGreeting1: content.footer.chatGreeting1 || prev.chatGreeting1,
-        chatGreeting2: content.footer.chatGreeting2 || prev.chatGreeting2,
-        chatStartBtn: content.footer.chatStartBtn || prev.chatStartBtn,
-        guaranteeTitle: content.footer.guaranteeTitle || prev.guaranteeTitle,
-        guaranteeDesc: content.footer.guaranteeDesc || prev.guaranteeDesc,
-        paymentLabel: content.footer.paymentLabel || content?.modals?.paymentLabel || prev.paymentLabel,
-        securityText: content.footer.securityText || content?.modals?.securityText || prev.securityText,
-        paymentMethods: cleanMethods(content.paymentMethods || content.footer.paymentMethods || prev.paymentMethods),
+        whatsappPhone: content.footer?.whatsappPhone || prev.whatsappPhone,
+        whatsappDefaultMsg: content.footer?.whatsappDefaultMsg || prev.whatsappDefaultMsg,
+        supportPillText: content.footer?.supportPillText || prev.supportPillText,
+        chatSupportTitle: content.footer?.chatSupportTitle || prev.chatSupportTitle,
+        chatOnlineStatus: content.footer?.chatOnlineStatus || prev.chatOnlineStatus,
+        chatGreeting1: content.footer?.chatGreeting1 || prev.chatGreeting1,
+        chatGreeting2: content.footer?.chatGreeting2 || prev.chatGreeting2,
+        chatStartBtn: content.footer?.chatStartBtn || prev.chatStartBtn,
+        guaranteeTitle: content.footer?.guaranteeTitle || prev.guaranteeTitle,
+        guaranteeDesc: content.footer?.guaranteeDesc || prev.guaranteeDesc,
+        paymentLabel: content.paymentLabel || content.modals?.paymentLabel || content.footer?.paymentLabel || prev.paymentLabel,
+        securityText: content.footer?.securityText || content.modals?.securityText || prev.securityText,
+        paymentMethods: cleanMethods(content.paymentMethods || content.footer?.paymentMethods || prev.paymentMethods),
+        orderSuccessTitle: content.modals?.successTitle || prev.orderSuccessTitle,
+        orderSuccessDesc: content.modals?.successDesc || prev.orderSuccessDesc,
+        orderServerUrl: content.modals?.serverUrl || prev.orderServerUrl,
+        orderStatusActive: content.modals?.statusActive || prev.orderStatusActive,
+        orderSetupGuide: content.modals?.setupGuideValue || prev.orderSetupGuide,
+        orderWhatsappBtnText: content.modals?.btnWhatsappConfirm || prev.orderWhatsappBtnText,
+        orderWhatsappMsg: content.modals?.whatsappOrderMsg || prev.orderWhatsappMsg,
+        orderDoneBtnText: content.modals?.btnDone || prev.orderDoneBtnText,
+        btnFreeTrial: content.navbar?.btnFreeTrial || prev.btnFreeTrial,
+        freeTrialWhatsappMsg: content.navbar?.freeTrialWhatsappMsg || prev.freeTrialWhatsappMsg,
       }));
     }
   }, [content]);
@@ -160,21 +184,31 @@ export const SiteSettingsView = ({
   };
 
   const handleReset = () => {
-    if (content?.footer) {
+    if (content) {
       setFormData({
-        whatsappPhone: content.footer.whatsappPhone || '+15551234567',
-        whatsappDefaultMsg: content.footer.whatsappDefaultMsg || 'Hello SatProMax Support, I would like to get started with IPTV',
-        supportPillText: content.footer.supportPillText || '24/7 SUPPORT',
-        chatSupportTitle: content.footer.chatSupportTitle || 'SatProMax Support',
-        chatOnlineStatus: content.footer.chatOnlineStatus || 'En ligne • Répond généralement en quelques secondes',
-        chatGreeting1: content.footer.chatGreeting1 || '👋 Bonjour ! Bienvenue sur SatProMax. Comment pouvons-nous vous aider ?',
-        chatGreeting2: content.footer.chatGreeting2 || '⚡ Souhaitez-vous un test gratuit ou de l\'aide pour configurer votre appareil ?',
-        chatStartBtn: content.footer.chatStartBtn || 'Démarrer la discussion WhatsApp',
-        guaranteeTitle: content.footer.guaranteeTitle || '7-Day Money Back Guarantee',
-        guaranteeDesc: content.footer.guaranteeDesc || '100% risk-free trial with instant money-back protection.',
-        paymentLabel: content.footer.paymentLabel || content?.modals?.paymentLabel || 'Select Payment Method:',
-        securityText: content.footer.securityText || content?.modals?.securityText || '256-Bit SSL Encrypted • 7-Day Money-Back Guarantee',
-        paymentMethods: cleanMethods(content.paymentMethods || content.footer.paymentMethods || []),
+        whatsappPhone: content.footer?.whatsappPhone || '+15551234567',
+        whatsappDefaultMsg: content.footer?.whatsappDefaultMsg || 'Hello SatProMax Support, I would like to get started with IPTV',
+        supportPillText: content.footer?.supportPillText || '24/7 SUPPORT',
+        chatSupportTitle: content.footer?.chatSupportTitle || 'SatProMax Support',
+        chatOnlineStatus: content.footer?.chatOnlineStatus || 'En ligne • Répond généralement en quelques secondes',
+        chatGreeting1: content.footer?.chatGreeting1 || '👋 Bonjour ! Bienvenue sur SatProMax. Comment pouvons-nous vous aider ?',
+        chatGreeting2: content.footer?.chatGreeting2 || '⚡ Souhaitez-vous un test gratuit ou de l\'aide pour configurer votre appareil ?',
+        chatStartBtn: content.footer?.chatStartBtn || 'Démarrer la discussion WhatsApp',
+        guaranteeTitle: content.footer?.guaranteeTitle || '7-Day Money Back Guarantee',
+        guaranteeDesc: content.footer?.guaranteeDesc || '100% risk-free trial with instant money-back protection.',
+        paymentLabel: content.paymentLabel || content.modals?.paymentLabel || content.footer?.paymentLabel || 'Mode de paiement *',
+        securityText: content.footer?.securityText || content.modals?.securityText || '256-Bit SSL Encrypted • 7-Day Money-Back Guarantee',
+        paymentMethods: cleanMethods(content.paymentMethods || content.footer?.paymentMethods || []),
+        orderSuccessTitle: content.modals?.successTitle || "Commande d'abonnement envoyée !",
+        orderSuccessDesc: content.modals?.successDesc || "Merci ! Une confirmation d'activation avec vos identifiants M3U & Xtream Codes a été envoyée à",
+        orderServerUrl: content.modals?.serverUrl || "http://line.satpromax.me",
+        orderStatusActive: content.modals?.statusActive || "Actif (Ligne VIP 24/7)",
+        orderSetupGuide: content.modals?.setupGuideValue || "Sent for {device}",
+        orderWhatsappBtnText: content.modals?.btnWhatsappConfirm || "Confirmer via Chat WhatsApp Instantané",
+        orderWhatsappMsg: content.modals?.whatsappOrderMsg || "Bonjour SatProMax, je viens de finaliser ma commande pour l'email {email}",
+        orderDoneBtnText: content.modals?.btnDone || "Terminé",
+        btnFreeTrial: content.navbar?.btnFreeTrial || "Test Gratuit 24h",
+        freeTrialWhatsappMsg: content.navbar?.freeTrialWhatsappMsg || "Bonjour SatProMax, je souhaite demander un test gratuit de 24 heures pour tester votre service IPTV s'il vous plaît.",
       });
       setHasChanges(false);
       if (triggerNotification) {
@@ -190,6 +224,24 @@ export const SiteSettingsView = ({
       if (formData.paymentMethods) {
         updateSection('paymentMethods', formData.paymentMethods);
       }
+      updateSection('paymentLabel', formData.paymentLabel);
+      updateSection('modals', {
+        ...(content?.modals || {}),
+        paymentLabel: formData.paymentLabel,
+        successTitle: formData.orderSuccessTitle,
+        successDesc: formData.orderSuccessDesc,
+        serverUrl: formData.orderServerUrl,
+        statusActive: formData.orderStatusActive,
+        setupGuideValue: formData.orderSetupGuide,
+        btnWhatsappConfirm: formData.orderWhatsappBtnText,
+        whatsappOrderMsg: formData.orderWhatsappMsg,
+        btnDone: formData.orderDoneBtnText,
+      });
+      updateSection('navbar', {
+        ...(content?.navbar || {}),
+        btnFreeTrial: formData.btnFreeTrial,
+        freeTrialWhatsappMsg: formData.freeTrialWhatsappMsg,
+      });
     }
     if (saveToServer) {
       const updatedContent = {
@@ -199,12 +251,30 @@ export const SiteSettingsView = ({
           ...formData,
         },
         paymentMethods: formData.paymentMethods,
+        paymentLabel: formData.paymentLabel,
+        navbar: {
+          ...(content?.navbar || {}),
+          btnFreeTrial: formData.btnFreeTrial,
+          freeTrialWhatsappMsg: formData.freeTrialWhatsappMsg,
+        },
+        modals: {
+          ...(content?.modals || {}),
+          paymentLabel: formData.paymentLabel,
+          successTitle: formData.orderSuccessTitle,
+          successDesc: formData.orderSuccessDesc,
+          serverUrl: formData.orderServerUrl,
+          statusActive: formData.orderStatusActive,
+          setupGuideValue: formData.orderSetupGuide,
+          btnWhatsappConfirm: formData.orderWhatsappBtnText,
+          whatsappOrderMsg: formData.orderWhatsappMsg,
+          btnDone: formData.orderDoneBtnText,
+        },
       };
       await saveToServer(updatedContent);
     }
     setHasChanges(false);
     if (triggerNotification) {
-      triggerNotification('✅ Paramètres et modes de paiement enregistrés avec succès dans MongoDB Atlas !');
+      triggerNotification('✅ Paramètres, modes de paiement et messages de confirmation enregistrés avec succès !');
     }
   };
 
@@ -382,6 +452,38 @@ export const SiteSettingsView = ({
                 </div>
               </div>
             </div>
+
+            <div className="settings-divider"></div>
+
+            <div className="settings-form-grid-2">
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>Libellé Bouton Test Gratuit (Navbar) :</span>
+                  <span className="label-tip">Affiché dans la barre de navigation en haut du site</span>
+                </label>
+                <input 
+                  type="text" 
+                  className="settings-input-control"
+                  placeholder="Demander un test gratuit 24 heures"
+                  value={formData.btnFreeTrial || ''}
+                  onChange={(e) => handleChange('btnFreeTrial', e.target.value)}
+                />
+              </div>
+
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>Message WhatsApp pour Test 24h :</span>
+                  <span className="label-tip">Le texte envoyé lors du clic sur le bouton de test gratuit</span>
+                </label>
+                <textarea 
+                  rows={2}
+                  className="settings-textarea-control"
+                  placeholder="Bonjour SatProMax, je souhaite demander un test gratuit de 24 heures pour tester votre service IPTV s'il vous plaît."
+                  value={formData.freeTrialWhatsappMsg || ''}
+                  onChange={(e) => handleChange('freeTrialWhatsappMsg', e.target.value)}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Card: Modes de Paiement (Complete Your Subscription) */}
@@ -412,7 +514,7 @@ export const SiteSettingsView = ({
                   className="settings-input-control"
                   value={formData.paymentLabel || ''}
                   onChange={(e) => handleChange('paymentLabel', e.target.value)}
-                  placeholder="Select Payment Method:"
+                  placeholder="Mode de paiement *"
                 />
               </div>
 
@@ -431,10 +533,27 @@ export const SiteSettingsView = ({
             {/* Methods Management List */}
             <div className="payment-methods-admin-section">
               <div className="methods-section-header">
-                <span className="quick-label">⚡ Options de paiement configurées :</span>
-                <span className="methods-counter-pill">
-                  {formData.paymentMethods?.filter(m => m.enabled !== false).length || 0} / {formData.paymentMethods?.length || 0} visibles
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span className="quick-label">⚡ Options de paiement configurées :</span>
+                  <span className="methods-counter-pill">
+                    {formData.paymentMethods?.filter(m => m.enabled !== false).length || 0} / {formData.paymentMethods?.length || 0} visibles
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="btn-trigger-add-method"
+                  style={{ width: 'auto', padding: '6px 14px', fontSize: '0.75rem', marginTop: 0 }}
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, paymentMethods: DEFAULT_PAYMENT_METHODS }));
+                    setHasChanges(true);
+                    if (triggerNotification) {
+                      triggerNotification('🔄 Les 13 modes de paiement par défaut ont été restaurés.');
+                    }
+                  }}
+                  title="Restaurer les 13 modes par défaut (Flouci, D 17, Paypal, Binance, Redotpay, Virement bancaire, Moneco, Western union, Ria, La Poste tunisienne, IZI, MoneyGram, kashy)"
+                >
+                  🔄 Restaurer les 13 modes officiels
+                </button>
               </div>
 
               <div className="payment-methods-admin-list">
@@ -478,11 +597,11 @@ export const SiteSettingsView = ({
                           {/* Preview Button */}
                           <div className="method-field-group method-preview-group">
                             <label className="method-field-label">Aperçu bouton :</label>
-                            <div className={`pay-opt-box-preview ${isEnabled ? 'preview-active' : 'preview-muted'}`}>
-                              {method.image && (
-                                <img src={method.image} alt="" className="pay-opt-img-preview" />
-                              )}
-                              <span>{method.name || 'Mode de paiement'}</span>
+                            <div className={`pay-opt-box-preview ${isEnabled ? 'preview-active' : 'preview-muted'}`} style={{ minWidth: '135px', padding: '8px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: isEnabled ? '#ffffff' : 'rgba(255,255,255,0.03)', color: isEnabled ? '#0f172a' : '#64748b', border: isEnabled ? '1.5px solid #0ea5e9' : '1px dashed rgba(255,255,255,0.1)' }}>
+                              <div style={{ height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <PaymentLogo method={method} />
+                              </div>
+                              <span style={{ fontSize: '11px', fontWeight: '700' }}>{method.name || 'Mode de paiement'}</span>
                             </div>
                           </div>
 
@@ -607,11 +726,11 @@ export const SiteSettingsView = ({
                     {newMethodName && (
                       <div className="add-preview-strip">
                         <span className="method-field-label">Aperçu du bouton :</span>
-                        <div className="pay-opt-box-preview preview-active add-box-live-btn">
-                          {newMethodImage && (
-                            <img src={newMethodImage} alt="" className="pay-opt-img-preview" />
-                          )}
-                          <span>{newMethodName}</span>
+                        <div className="pay-opt-box-preview preview-active add-box-live-btn" style={{ minWidth: '135px', padding: '8px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: '#ffffff', color: '#0f172a', border: '1.5px solid #0ea5e9' }}>
+                          <div style={{ height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <PaymentLogo method={{ name: newMethodName, image: newMethodImage }} />
+                          </div>
+                          <span style={{ fontSize: '11px', fontWeight: '700' }}>{newMethodName}</span>
                         </div>
                       </div>
                     )}
@@ -650,6 +769,182 @@ export const SiteSettingsView = ({
                     <span>+ Ajouter un mode de paiement personnalisé</span>
                   </button>
                 )}
+              </div>
+            </div>
+          </div>
+
+          {/* Card: Message de Confirmation de Commande (Fenêtre de Succès) */}
+          <div className="settings-card order-success-settings-card">
+            <div className="card-header-with-badge">
+              <div className="card-header-left">
+                <div className="success-badge-icon" style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
+                  ✅
+                </div>
+                <div>
+                  <h3 className="card-title">Message de Confirmation de Commande (Fenêtre de Succès)</h3>
+                  <p className="card-desc">
+                    Personnalisez le titre, les textes, l'URL du serveur, le message WhatsApp et les boutons affichés au client immédiatement après la validation de sa commande.
+                  </p>
+                </div>
+              </div>
+              <span className="status-pill status-active">
+                ● Personnalisable
+              </span>
+            </div>
+
+            {/* Inputs Grid */}
+            <div className="settings-form-grid-2">
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>Titre de Confirmation (H3) :</span>
+                  <span className="label-tip">Titre principal affiché sous l'icône verte</span>
+                </label>
+                <input 
+                  type="text" 
+                  className="settings-input-control"
+                  value={formData.orderSuccessTitle || ''}
+                  onChange={(e) => handleChange('orderSuccessTitle', e.target.value)}
+                  placeholder="Commande d'abonnement envoyée !"
+                />
+              </div>
+
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>URL du Serveur IPTV affichée :</span>
+                  <span className="label-tip">Ligne 1 de l'encadré</span>
+                </label>
+                <input 
+                  type="text" 
+                  className="settings-input-control"
+                  value={formData.orderServerUrl || ''}
+                  onChange={(e) => handleChange('orderServerUrl', e.target.value)}
+                  placeholder="http://line.satpromax.me"
+                />
+              </div>
+            </div>
+
+            <div className="settings-form-block">
+              <label className="settings-label">
+                <span>Message d'accusé de réception :</span>
+                <span className="label-tip">L'adresse e-mail saisie par le client sera affichée en gras à la fin</span>
+              </label>
+              <textarea 
+                rows={2}
+                className="settings-textarea-control"
+                value={formData.orderSuccessDesc || ''}
+                onChange={(e) => handleChange('orderSuccessDesc', e.target.value)}
+                placeholder="Merci ! Une confirmation d'activation avec vos identifiants M3U & Xtream Codes a été envoyée à"
+              />
+            </div>
+
+            <div className="settings-form-grid-2">
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>Statut de la Ligne affiché :</span>
+                  <span className="label-tip">Ligne 2 de l'encadré</span>
+                </label>
+                <input 
+                  type="text" 
+                  className="settings-input-control"
+                  value={formData.orderStatusActive || ''}
+                  onChange={(e) => handleChange('orderStatusActive', e.target.value)}
+                  placeholder="Actif (Ligne VIP 24/7)"
+                />
+              </div>
+
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>Guide d'installation :</span>
+                  <span className="label-tip">Utilisez &#123;device&#125; pour insérer l'appareil choisi</span>
+                </label>
+                <input 
+                  type="text" 
+                  className="settings-input-control"
+                  value={formData.orderSetupGuide || ''}
+                  onChange={(e) => handleChange('orderSetupGuide', e.target.value)}
+                  placeholder="Sent for {device}"
+                />
+              </div>
+            </div>
+
+            <div className="settings-form-grid-2">
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>Texte du Bouton WhatsApp (Bouton Vert) :</span>
+                </label>
+                <input 
+                  type="text" 
+                  className="settings-input-control"
+                  value={formData.orderWhatsappBtnText || ''}
+                  onChange={(e) => handleChange('orderWhatsappBtnText', e.target.value)}
+                  placeholder="Confirmer via Chat WhatsApp Instantané"
+                />
+              </div>
+
+              <div className="settings-form-block">
+                <label className="settings-label">
+                  <span>Texte du Bouton de Fermeture :</span>
+                </label>
+                <input 
+                  type="text" 
+                  className="settings-input-control"
+                  value={formData.orderDoneBtnText || ''}
+                  onChange={(e) => handleChange('orderDoneBtnText', e.target.value)}
+                  placeholder="Terminé"
+                />
+              </div>
+            </div>
+
+            <div className="settings-form-block">
+              <label className="settings-label">
+                <span>Message pré-rempli envoyé vers WhatsApp :</span>
+                <span className="label-tip">Variables disponibles : &#123;email&#125;, &#123;plan&#125;, &#123;device&#125;</span>
+              </label>
+              <input 
+                type="text" 
+                className="settings-input-control"
+                value={formData.orderWhatsappMsg || ''}
+                onChange={(e) => handleChange('orderWhatsappMsg', e.target.value)}
+                placeholder="Bonjour SatProMax, je viens de finaliser ma commande pour l'email {email}"
+              />
+            </div>
+
+            {/* Live Interactive Modal Preview */}
+            <div style={{ marginTop: '20px', paddingTop: '18px', borderTop: '1px dashed rgba(255, 255, 255, 0.1)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span className="quick-label">👁️ Aperçu réel de la fenêtre après confirmation :</span>
+                <span className="methods-counter-pill">Aperçu en direct</span>
+              </div>
+              <div style={{ maxWidth: '420px', margin: '0 auto', background: '#141622', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '20px', padding: '24px 20px', textAlign: 'center', boxShadow: '0 15px 35px rgba(0,0,0,0.6)' }}>
+                <div style={{ width: '54px', height: '54px', background: '#22c55e', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: '26px', fontWeight: '900', boxShadow: '0 0 20px rgba(34, 197, 94, 0.5)' }}>
+                  ✓
+                </div>
+                <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#ffffff', margin: '0 0 8px' }}>
+                  {formData.orderSuccessTitle || "Commande d'abonnement envoyée !"}
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: '#9da3b4', margin: '0 0 16px', lineHeight: 1.4 }}>
+                  {(formData.orderSuccessDesc || "Merci ! Une confirmation d'activation avec vos identifiants M3U & Xtream Codes a été envoyée à")}{' '}
+                  <strong style={{ color: '#ffffff' }}>client@exemple.com</strong>.
+                </p>
+                <div style={{ background: 'rgba(10, 11, 14, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '12px', textAlign: 'left', marginBottom: '18px', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                  <div style={{ marginBottom: '4px', color: '#e5e7eb' }}>
+                    <strong>URL du Serveur :</strong> {formData.orderServerUrl || 'http://line.satpromax.me'}
+                  </div>
+                  <div style={{ marginBottom: '4px', color: '#e5e7eb' }}>
+                    <strong>Statut :</strong> {formData.orderStatusActive || 'Actif (Ligne VIP 24/7)'}
+                  </div>
+                  <div style={{ color: '#e5e7eb' }}>
+                    <strong>Guide d'installation :</strong> {(formData.orderSetupGuide || 'Sent for {device}').replace('{device}', 'SmartTV')}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ padding: '11px', borderRadius: '10px', background: '#25d366', color: '#ffffff', fontWeight: '700', fontSize: '0.85rem' }}>
+                    {formData.orderWhatsappBtnText || 'Confirmer via Chat WhatsApp Instantané'}
+                  </div>
+                  <div style={{ padding: '9px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.08)', color: '#ffffff', fontWeight: '600', fontSize: '0.82rem' }}>
+                    {formData.orderDoneBtnText || 'Terminé'}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useContent } from '../context/ContentContext';
+import { defaultContent } from '../context/defaultContent';
 import { AdminEditWrapper } from './AdminEditWrapper';
 import { 
   IconTv, 
@@ -27,10 +28,11 @@ export const DownloadAppsPage = ({ onOpenOrderModal, onNavigateHome }) => {
   } = useContent();
 
   const downloadAppsData = content?.downloadApps || {};
-  const hero = downloadAppsData.hero || {};
-  const featured = downloadAppsData.featuredProduct || {};
-  const easyInstall = downloadAppsData.easyInstall || {};
-  const categories = downloadAppsData.categories || [];
+  const defDl = defaultContent?.downloadApps || {};
+  const hero = { ...(defDl.hero || {}), ...(downloadAppsData.hero || {}) };
+  const featured = { ...(defDl.featuredProduct || {}), ...(downloadAppsData.featuredProduct || {}) };
+  const easyInstall = { ...(defDl.easyInstall || {}), ...(downloadAppsData.easyInstall || {}) };
+  const categories = downloadAppsData.categories || defDl.categories || [];
 
   // Helper to add a brand new category directly from the page
   const handleDirectAddCategory = () => {

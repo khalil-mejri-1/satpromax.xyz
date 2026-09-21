@@ -1,3 +1,19 @@
+export const DEFAULT_PAYMENT_METHODS = [
+  { id: 'flouci', name: 'Flouci', enabled: true },
+  { id: 'd17', name: 'D 17', enabled: true },
+  { id: 'paypal', name: 'Paypal', enabled: true },
+  { id: 'binance', name: 'Binance', enabled: true },
+  { id: 'redotpay', name: 'Redotpay', enabled: true },
+  { id: 'virement', name: 'Virement bancaire', enabled: true },
+  { id: 'moneco', name: 'Moneco', enabled: true },
+  { id: 'western_union', name: 'Western union', enabled: true },
+  { id: 'ria', name: 'Ria Money Transfer', enabled: true },
+  { id: 'la_poste', name: 'La Poste tunisienne', enabled: true },
+  { id: 'zitouna', name: 'IZI - Zitouna Payment', enabled: true },
+  { id: 'moneygram', name: 'MoneyGram', enabled: true },
+  { id: 'kashy', name: 'kashy', enabled: true },
+];
+
 export const defaultContent = {
   // 1. Navigation & General
   navbar: {
@@ -10,6 +26,8 @@ export const defaultContent = {
     linkApps: "Download Apps",
     linkContact: "Contact",
     btnGetStarted: "GET STARTED",
+    btnFreeTrial: "Test Gratuit 24h",
+    freeTrialWhatsappMsg: "Bonjour SatProMax, je souhaite demander un test gratuit de 24 heures pour tester votre service IPTV s'il vous plaît.",
   },
 
   // 2. Hero Section
@@ -1136,9 +1154,24 @@ export const defaultContent = {
     supportPillText: "24/7 SUPPORT",
     whatsappPhone: "+15551234567",
     whatsappDefaultMsg: "Hello SatProMax Support, I would like to get started with IPTV",
-    paymentLabel: "Select Payment Method:",
+    paymentLabel: "Mode de paiement *",
     securityText: "256-Bit SSL Encrypted • 7-Day Money-Back Guarantee",
-    paymentMethods: [],
+    paymentMethods: DEFAULT_PAYMENT_METHODS,
   },
-  paymentMethods: [],
+  paymentMethods: DEFAULT_PAYMENT_METHODS,
+  modals: {
+    paymentLabel: "Mode de paiement *",
+    successTitle: "Commande d'abonnement envoyée !",
+    successDesc: "Merci ! Une confirmation d'activation avec vos identifiants M3U & Xtream Codes a été envoyée à",
+    serverUrlLabel: "URL du Serveur :",
+    serverUrl: "http://line.satpromax.me",
+    statusLabel: "Statut :",
+    statusActive: "Actif (Ligne VIP 24/7)",
+    setupGuideLabel: "Guide d'installation :",
+    setupGuideValue: "Sent for {device}",
+    btnWhatsappConfirm: "Confirmer via Chat WhatsApp Instantané",
+    whatsappOrderMsg: "Bonjour SatProMax, je viens de finaliser ma commande pour l'email {email}",
+    btnDone: "Terminé",
+  },
 };
+

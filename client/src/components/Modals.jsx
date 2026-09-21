@@ -16,6 +16,7 @@ import {
   IconMonitor,
   IconServer
 } from './Icons';
+import { PaymentLogo, DEFAULT_PAYMENT_METHODS } from './PaymentLogos';
 
 const DEVICE_OPTIONS = [
   {
@@ -244,19 +245,23 @@ export const Modals = ({
   const footerData = content?.footer || {};
   const cleanWhatsappPhone = (content?.footer?.whatsappPhone || '').replace(/[^0-9]/g, '');
 
-  const rawPaymentMethods = content?.paymentMethods 
-    || footerData?.paymentMethods 
-    || [];
+  const rawPaymentMethods = (Array.isArray(content?.paymentMethods) && content.paymentMethods.length > 0)
+    ? content.paymentMethods 
+    : (Array.isArray(footerData?.paymentMethods) && footerData.paymentMethods.length > 0)
+      ? footerData.paymentMethods
+      : DEFAULT_PAYMENT_METHODS;
 
   const activePaymentMethods = useMemo(() => {
     return Array.isArray(rawPaymentMethods)
-      ? rawPaymentMethods.filter((m) => m && m.enabled !== false && m.id !== 'card' && m.id !== 'paypal' && m.id !== 'crypto')
-      : [];
+      ? rawPaymentMethods.filter((m) => m && m.enabled !== false)
+      : DEFAULT_PAYMENT_METHODS;
   }, [rawPaymentMethods]);
 
-  const paymentLabel = footerData?.paymentLabel 
+  const paymentLabel = content?.paymentLabel
+    || content?.modals?.paymentLabel 
+    || footerData?.paymentLabel 
     || modalsData.paymentLabel 
-    || 'Select Payment Method:';
+    || 'Mode de paiement *';
 
   const securityText = footerData?.securityText 
     || modalsData.securityText 
@@ -267,7 +272,7 @@ export const Modals = ({
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerWhatsapp, setCustomerWhatsapp] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState(() => activePaymentMethods[0]?.id || '');
+  const [selectedPayment, setSelectedPayment] = useState(() => activePaymentMethods[0]?.id || 'flouci');
 
   // Ensure selectedPayment matches an active method
   useEffect(() => {
@@ -438,19 +443,40 @@ export const Modals = ({
                   </div>
 
                   {activePaymentMethods.length > 0 && (
-                    <div className="form-group">
-                      <label className="form-label">{paymentLabel}</label>
-                      <div className="payment-options-grid">
-                        {activePaymentMethods.map((pm) => (
-                          <button 
-                            key={pm.id}
-                            type="button" 
-                            className={`pay-opt-box ${selectedPayment === pm.id ? 'active' : ''}`}
-                            onClick={() => setSelectedPayment(pm.id)}
-                          >
-                            <span>{pm.name}</span>
-                          </button>
-                        ))}
+                    <div className="form-group payment-selection-group">
+                      <label className="form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>{paymentLabel}</span>
+                        <span style={{ fontSize: '0.72rem', color: '#9da3b4', fontWeight: 'normal' }}>
+                          Sécurisé & Instantané
+                        </span>
+                      </label>
+                      <div className="payment-cards-scroll-wrapper">
+                        <div className="payment-options-cards-grid">
+                          {activePaymentMethods.map((pm) => {
+                            const isSelected = selectedPayment === pm.id;
+                            return (
+                              <div 
+                                key={pm.id}
+                                role="button"
+                                tabIndex={0}
+                                className={`luxury-pay-card ${isSelected ? 'card-selected' : ''}`}
+                                onClick={() => setSelectedPayment(pm.id)}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedPayment(pm.id); }}
+                                aria-pressed={isSelected}
+                              >
+                                {isSelected && (
+                                  <div className="pay-card-check-badge" title="Sélectionné">
+                                    ✓
+                                  </div>
+                                )}
+                                <div className="pay-card-logo-box">
+                                  <PaymentLogo method={pm} />
+                                </div>
+                                <span className="pay-card-name" title={pm.name}>{pm.name}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -471,33 +497,49 @@ export const Modals = ({
                 <div className="success-icon-bubble">
                   <IconCheck size={36} />
                 </div>
-                <h3>{modalsData.successTitle || 'Subscription Order Initiated!'}</h3>
+                <h3>{modalsData.successTitle || content?.modals?.successTitle || "Commande d'abonnement envoyée !"}</h3>
                 <p>
-                  {modalsData.successDesc || 'Thank you! An activation confirmation along with your credentials has been sent to'} <strong>{customerEmail}</strong>.
+                  {(modalsData.successDesc || content?.modals?.successDesc || "Merci ! Une confirmation d'activation avec vos identifiants M3U & Xtream Codes a été envoyée à")} <strong>{customerEmail}</strong>.
                 </p>
                 <div className="credentials-preview-box">
-                  <div className="cred-line"><strong>{modalsData.serverUrlLabel || 'Server URL:'}</strong> http://line.satpromax.me</div>
-                  <div className="cred-line"><strong>{modalsData.statusLabel || 'Status:'}</strong> {modalsData.statusActive || 'Active (24/7 VIP Line)'}</div>
-                  <div className="cred-line"><strong>{modalsData.setupGuideLabel || 'Setup Guide:'}</strong> Sent for {deviceType}</div>
+                  <div className="cred-line">
+                    <strong>{modalsData.serverUrlLabel || content?.modals?.serverUrlLabel || 'URL du Serveur :'}</strong> {modalsData.serverUrl || content?.modals?.serverUrl || 'http://line.satpromax.me'}
+                  </div>
+                  <div className="cred-line">
+                    <strong>{modalsData.statusLabel || content?.modals?.statusLabel || 'Statut :'}</strong> {modalsData.statusActive || content?.modals?.statusActive || 'Actif (Ligne VIP 24/7)'}
+                  </div>
+                  <div className="cred-line">
+                    <strong>{modalsData.setupGuideLabel || content?.modals?.setupGuideLabel || "Guide d'installation :"}</strong> {(modalsData.setupGuideValue || content?.modals?.setupGuideValue || "Sent for {device}").replace('{device}', deviceType)}
+                  </div>
                 </div>
 
                 <div className="success-actions-row">
                   <a 
                     href={cleanWhatsappPhone 
-                      ? `https://wa.me/${cleanWhatsappPhone}?text=Hello%20SatProMax,%20I%20just%20placed%20order%20for%20email%20${encodeURIComponent(customerEmail)}`
-                      : `https://wa.me/?text=Hello%20SatProMax,%20I%20just%20placed%20order%20for%20email%20${encodeURIComponent(customerEmail)}`}
+                      ? `https://wa.me/${cleanWhatsappPhone}?text=${encodeURIComponent(
+                          (modalsData.whatsappOrderMsg || content?.modals?.whatsappOrderMsg || "Bonjour SatProMax, je viens de finaliser ma commande pour l'email {email}")
+                            .replace('{email}', customerEmail)
+                            .replace('{plan}', orderModalData?.title || 'Abonnement IPTV')
+                            .replace('{device}', deviceType)
+                        )}`
+                      : `https://wa.me/?text=${encodeURIComponent(
+                          (modalsData.whatsappOrderMsg || content?.modals?.whatsappOrderMsg || "Bonjour SatProMax, je viens de finaliser ma commande pour l'email {email}")
+                            .replace('{email}', customerEmail)
+                            .replace('{plan}', orderModalData?.title || 'Abonnement IPTV')
+                            .replace('{device}', deviceType)
+                        )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-whatsapp-confirm"
                   >
-                    {modalsData.btnWhatsappConfirm || 'Confirm via WhatsApp Instant Chat'}
+                    {modalsData.btnWhatsappConfirm || content?.modals?.btnWhatsappConfirm || 'Confirmer via Chat WhatsApp Instantané'}
                   </a>
                   <button 
                     type="button" 
                     className="btn-close-success"
                     onClick={onCloseOrderModal}
                   >
-                    {modalsData.btnDone || 'Done'}
+                    {modalsData.btnDone || content?.modals?.btnDone || 'Terminé'}
                   </button>
                 </div>
               </div>

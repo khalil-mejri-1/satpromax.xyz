@@ -9,6 +9,38 @@ const LOCAL_STORAGE_KEY = 'satpromax_site_content_v3';
 const ADMIN_AUTH_KEY = 'satpromax_admin_logged_in';
 const LANG_STORAGE_KEY = 'satpromax_site_lang';
 
+function isDefaultOrTranslation(val, sectionKey, key, subKey = null) {
+  if (val === undefined || val === null || val === '') return true;
+  const cleanVal = typeof val === 'string' ? val.trim() : val;
+
+  // 1. Check against defaultContent
+  const defSection = defaultContent[sectionKey];
+  if (defSection) {
+    const defVal = subKey ? defSection[key]?.[subKey] : defSection[key];
+    if (defVal !== undefined) {
+      const cleanDef = typeof defVal === 'string' ? defVal.trim() : defVal;
+      if (JSON.stringify(cleanVal) === JSON.stringify(cleanDef)) {
+        return true;
+      }
+    }
+  }
+
+  // 2. Check across all translations
+  for (const langCode of Object.keys(translations)) {
+    const tSection = translations[langCode]?.[sectionKey];
+    if (!tSection) continue;
+    const transVal = subKey ? tSection[key]?.[subKey] : tSection[key];
+    if (transVal !== undefined) {
+      const cleanTrans = typeof transVal === 'string' ? transVal.trim() : transVal;
+      if (JSON.stringify(cleanVal) === JSON.stringify(cleanTrans)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 function mergeSection(sectionKey, userSection, transSection, defaultSection) {
   if (!userSection) return transSection || defaultSection || {};
   if (!transSection) return userSection;
@@ -31,9 +63,14 @@ function mergeSection(sectionKey, userSection, transSection, defaultSection) {
           const transPropVal = transPlan[planProp];
 
           if (planProp === 'features' && Array.isArray(transPropVal)) {
-            mergedPlan.features = transPropVal;
+            if (JSON.stringify(p.features) === JSON.stringify(defPlan.features) || !p.features) {
+              mergedPlan.features = transPropVal;
+            }
           } else if (planProp === 'title' || planProp === 'period' || planProp === 'badge' || planProp === 'savings') {
-            mergedPlan[planProp] = transPropVal;
+            const isDefProp = JSON.stringify(p[planProp]) === JSON.stringify(defPlan[planProp]) || p[planProp] === undefined;
+            if (isDefProp) {
+              mergedPlan[planProp] = transPropVal;
+            }
           }
         }
         return mergedPlan;
@@ -76,10 +113,11 @@ function mergeSection(sectionKey, userSection, transSection, defaultSection) {
       result[key] = { ...(uVal || {}) };
       for (const subKey of Object.keys(tVal)) {
         const subU = uVal ? uVal[subKey] : undefined;
-        const subD = dVal ? dVal[subKey] : undefined;
         const subT = tVal[subKey];
-        if (JSON.stringify(subU) === JSON.stringify(subD) || subU === undefined || typeof subT === 'string') {
-          result[key][subKey] = subT;
+        if (isDefaultOrTranslation(subU, sectionKey, key, subKey)) {
+          result[key][subKey] = subT !== undefined ? subT : subU;
+        } else {
+          result[key][subKey] = subU;
         }
       }
     }
@@ -147,7 +185,11 @@ function mergeSection(sectionKey, userSection, transSection, defaultSection) {
     }
     // 5. Primitive values (strings, numbers, booleans)
     else {
-      result[key] = tVal;
+      if (isDefaultOrTranslation(uVal, sectionKey, key)) {
+        result[key] = tVal !== undefined ? tVal : uVal;
+      } else {
+        result[key] = uVal;
+      }
     }
   }
 
@@ -466,13 +508,23 @@ export const ContentProvider = ({ children }) => {
 
   // Update a specific section
   const updateSection = (sectionKey, newSectionData) => {
-    setContent((prev) => ({
-      ...prev,
-      [sectionKey]: {
-        ...prev[sectionKey],
-        ...newSectionData,
-      },
-    }));
+    setContent((prev) => {
+      let updatedVal;
+      if (Array.isArray(newSectionData)) {
+        updatedVal = [...newSectionData];
+      } else if (newSectionData !== null && typeof newSectionData === 'object') {
+        updatedVal = {
+          ...(prev[sectionKey] || {}),
+          ...newSectionData,
+        };
+      } else {
+        updatedVal = newSectionData;
+      }
+      return {
+        ...prev,
+        [sectionKey]: updatedVal,
+      };
+    });
     triggerNotification(`✨ تم تطبيق وحفظ تعديلات ${sectionKey} بنجاح!`);
   };
 

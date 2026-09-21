@@ -1,11 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useContent } from '../context/ContentContext';
-import { IconTv, IconTag, IconMonitor, IconHeadphones, IconChevronDown, IconPlay, IconMenu, IconClose, IconDownload, IconGlobe } from './Icons';
+import { IconTv, IconTag, IconMonitor, IconHeadphones, IconChevronDown, IconPlay, IconMenu, IconClose, IconDownload, IconGlobe, IconWhatsApp } from './Icons';
 import { LanguageIconsModal } from './LanguageIconsModal';
 
 export const Navbar = ({ onOpenOrderModal, onNavigateDashboard, currentRoute, onNavigate }) => {
   const { content, currentLang, setLang, languages: contextLanguages, isAdmin, setActiveEditingSection } = useContent();
   const navData = content?.navbar || {};
+
+  const cleanWhatsappPhone = (content?.footer?.whatsappPhone || '').replace(/[^0-9]/g, '');
+  const freeTrialMsg = navData.freeTrialWhatsappMsg 
+    || content?.footer?.freeTrialWhatsappMsg 
+    || "Bonjour SatProMax, je souhaite demander un test gratuit de 24 heures pour tester votre service IPTV s'il vous plaît.";
+  const whatsappTrialUrl = cleanWhatsappPhone 
+    ? `https://wa.me/${cleanWhatsappPhone}?text=${encodeURIComponent(freeTrialMsg)}`
+    : `https://wa.me/?text=${encodeURIComponent(freeTrialMsg)}`;
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
@@ -54,6 +62,15 @@ export const Navbar = ({ onOpenOrderModal, onNavigateDashboard, currentRoute, on
     }
     return <span className="lang-flag">{langObj.flag}</span>;
   };
+
+  const trialBtnLabel = useMemo(() => {
+    if (navData.btnFreeTrial && navData.btnFreeTrial !== 'Demander un test gratuit 24 heures') {
+      return navData.btnFreeTrial;
+    }
+    if (currentLang === 'ar') return 'تجربة مجانية 24h';
+    if (currentLang === 'en') return '24h Free Trial';
+    return 'Test Gratuit 24h';
+  }, [navData.btnFreeTrial, currentLang]);
 
   return (
     <header className={`navbar-header ${isScrolled ? 'scrolled' : ''}`}>
@@ -169,6 +186,24 @@ export const Navbar = ({ onOpenOrderModal, onNavigateDashboard, currentRoute, on
               </div>
             )}
           </div>
+
+          {/* Subtle Vertical Divider */}
+          <div className="nav-actions-divider" aria-hidden="true" />
+
+          {/* TEST GRATUIT 24H */}
+          <a
+            href={whatsappTrialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-free-trial-navbar"
+            title={trialBtnLabel}
+          >
+            <span className="trial-whatsapp-icon-bubble">
+              <IconWhatsApp size={15} />
+            </span>
+            <span className="trial-btn-text">{trialBtnLabel}</span>
+            <span className="trial-pulse-dot" aria-hidden="true"></span>
+          </a>
 
           {/* GET STARTED CTA */}
           <button 
@@ -299,6 +334,22 @@ export const Navbar = ({ onOpenOrderModal, onNavigateDashboard, currentRoute, on
                 </button>
               )}
             </div>
+
+            {/* MOBILE TEST GRATUIT 24H */}
+            <a
+              href={whatsappTrialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-free-trial-navbar mobile-w-full"
+              style={{ marginBottom: '10px', justifyContent: 'center' }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="trial-whatsapp-icon-bubble">
+                <IconWhatsApp size={16} />
+              </span>
+              <span>{trialBtnLabel}</span>
+              <span className="trial-pulse-dot" aria-hidden="true"></span>
+            </a>
 
             <button 
               type="button" 

@@ -152,12 +152,14 @@
 }
 
 .navbar-container {
-  max-width: 1280px;
+  max-width: 1600px;
+  width: 100%;
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 12px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: clamp(12px, 1.6vw, 28px);
 }
 
 /* Brand Logo */
@@ -168,6 +170,7 @@
   user-select: none;
   text-decoration: none;
   padding: 2px 0;
+  flex-shrink: 0;
 }
 
 .site-logo-img {
@@ -204,59 +207,78 @@
   filter: drop-shadow(0 8px 24px rgba(245, 158, 11, 0.75));
 }
 
-/* Desktop Nav Links */
+/* Desktop Nav Links - Modern Floating Capsule Dock */
 .nav-links-desktop {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: clamp(4px, 0.6vw, 8px);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  padding: 5px 8px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .nav-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
+  gap: 7px;
+  font-size: 0.88rem;
   font-weight: 500;
-  color: #d1d5db;
-  transition: all 0.2s ease;
+  color: #cbd5e1;
+  text-decoration: none;
+  white-space: nowrap !important;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  padding: 6px 0;
+  user-select: none;
 }
 
 .nav-link-icon {
-  color: #9ca3af;
-  transition: color 0.2s ease;
+  color: #94a3b8;
+  transition: all 0.22s ease;
+  flex-shrink: 0;
 }
 
 .nav-link:hover {
   color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
 }
 
 .nav-link:hover .nav-link-icon {
-  color: #ff3366;
+  color: #ef4444;
+  transform: scale(1.08);
 }
 
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--grad-pink-blue);
-  transition: width 0.25s ease;
-  border-radius: 2px;
+.nav-link.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.nav-link:hover::after {
-  width: 100%;
+.nav-link.active .nav-link-icon {
+  color: #ef4444;
 }
 
 /* Right Nav Actions */
 .nav-actions-desktop {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.nav-actions-divider {
+  width: 1px;
+  height: 26px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.18), transparent);
+  margin: 0 4px;
+  flex-shrink: 0;
 }
 
 /* Language Selector */
@@ -322,39 +344,140 @@
   color: #ffffff;
 }
 
+/* ==========================================================================
+   PROFESSIONAL NAVBAR FREE TRIAL BUTTON (Demander un test gratuit 24h)
+   ========================================================================== */
+.btn-free-trial-navbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.14) 0%, rgba(18, 140, 126, 0.22) 100%);
+  border: 1.5px solid rgba(37, 211, 102, 0.45);
+  color: #25d366;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  box-shadow: 0 3px 14px rgba(37, 211, 102, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+}
+
+.btn-free-trial-navbar:hover {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border-color: #25d366;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(37, 211, 102, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.trial-whatsapp-icon-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(37, 211, 102, 0.2);
+  color: #25d366;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-free-trial-navbar:hover .trial-whatsapp-icon-bubble {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.trial-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #25d366;
+  box-shadow: 0 0 10px #25d366;
+  animation: trialPulse 1.8s infinite;
+  flex-shrink: 0;
+}
+
+.btn-free-trial-navbar:hover .trial-pulse-dot {
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff;
+}
+
+@keyframes trialPulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px #25d366; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
 /* GET STARTED CTA Button */
 .btn-get-started {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 22px;
+  gap: 8px;
+  padding: 8px 20px;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #991b1b 100%);
   color: #ffffff;
   font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.45);
-  transition: all 0.3s ease;
+  letter-spacing: 0.4px;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  white-space: nowrap !important;
+  flex-shrink: 0;
 }
 
 .btn-get-started:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.65);
-  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  filter: brightness(1.08);
 }
 
 .play-icon-circle {
-  width: 22px;
-  height: 22px;
-  background: rgba(255, 255, 255, 0.25);
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.22);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1280px) and (min-width: 1051px) {
+  .nav-links-desktop {
+    gap: 2px;
+    padding: 4px 6px;
+  }
+  .nav-link {
+    padding: 6px 9px;
+    font-size: 0.82rem;
+    gap: 5px;
+  }
+  .nav-actions-desktop {
+    gap: 8px;
+  }
+  .btn-free-trial-navbar {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  .btn-get-started {
+    padding: 7px 15px;
+    font-size: 0.82rem;
+  }
 }
 
 .mobile-menu-btn {
@@ -3795,27 +3918,141 @@ select option,
   animation: dropdownPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.payment-options-grid {
+/* ==========================================================================
+   LUXURY PAYMENT METHODS CARDS GRID (Finaliser Votre Abonnement)
+   Matches Image 1 reference: White cards, Brand Logo, Name, Blue Active with ✓ badge
+   ========================================================================== */
+.payment-selection-group {
+  margin-top: 4px;
+}
+
+.payment-cards-scroll-wrapper {
+  max-height: 265px;
+  overflow-y: auto;
+  padding: 4px 4px 8px 4px;
+  margin: 0 -2px;
+}
+
+.payment-cards-scroll-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.payment-cards-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+.payment-cards-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.4);
+  border-radius: 10px;
+}
+.payment-cards-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #0ea5e9;
+}
+
+.payment-options-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
-.pay-opt-box {
-  padding: 10px 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  color: #d1d5db;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.2s;
+@media (min-width: 480px) {
+  .payment-options-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.pay-opt-box.active {
-  background: rgba(255, 51, 102, 0.15);
-  border-color: #ff3366;
+@media (max-width: 380px) {
+  .payment-options-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.luxury-pay-card {
+  position: relative;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  min-height: 84px;
+  padding: 10px 8px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.luxury-pay-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.luxury-pay-card.card-selected {
+  border: 2.5px solid #0ea5e9;
+  background: #f0f9ff;
+  box-shadow: 0 0 0 1px #0ea5e9, 0 6px 20px rgba(14, 165, 233, 0.22);
+}
+
+.pay-card-check-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0ea5e9;
   color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(14, 165, 233, 0.4);
+  animation: badgePop 0.18s ease-out;
+  line-height: 1;
+}
+
+[dir="rtl"] .pay-card-check-badge {
+  right: auto;
+  left: 6px;
+}
+
+@keyframes badgePop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.pay-card-logo-box {
+  height: 34px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.pay-card-name {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: color 0.15s;
+}
+
+.luxury-pay-card.card-selected .pay-card-name {
+  color: #0284c7;
+  font-weight: 800;
 }
 
 .order-security-row {
@@ -6195,21 +6432,22 @@ select option,
    16. DOWNLOAD APPS PAGE STYLES (Matching Screenshots with Premium Dark Theme)
    ========================================================================== */
 .nav-link-apps-highlight {
-  background: rgba(239, 68, 68, 0.12) !important;
-  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(185, 28, 28, 0.24) 100%) !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
   border-radius: 9999px !important;
-  padding: 6px 14px !important;
-  color: #f87171 !important;
-  font-weight: 700 !important;
-  transition: all 0.25s ease !important;
+  padding: 7px 14px !important;
+  color: #fca5a5 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.18) !important;
+  transition: all 0.22s ease !important;
 }
 
 .nav-link-apps-highlight:hover {
-  background: rgba(239, 68, 68, 0.25) !important;
-  border-color: #ef4444 !important;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.28) 0%, rgba(185, 28, 28, 0.38) 100%) !important;
+  border-color: rgba(239, 68, 68, 0.75) !important;
   color: #ffffff !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.4) !important;
 }
 
 .download-apps-page-root {
@@ -11529,6 +11767,16 @@ html, body {
 
 .payment-settings-card:hover {
   border-color: rgba(255, 51, 102, 0.45);
+}
+
+.order-success-settings-card {
+  border-color: rgba(34, 197, 94, 0.28);
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.04) 0%, rgba(18, 20, 29, 0.85) 100%);
+  box-shadow: 0 12px 35px rgba(34, 197, 94, 0.08);
+}
+
+.order-success-settings-card:hover {
+  border-color: rgba(34, 197, 94, 0.45);
 }
 
 .payment-badge-icon {

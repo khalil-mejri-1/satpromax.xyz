@@ -5,6 +5,7 @@ export const ar = {
       linkInstall: "طريقة التثبيت",
       linkApps: "تحميل التطبيقات",
       linkContact: "تواصل معنا",
+      btnFreeTrial: "تجربة مجانية 24h",
       btnGetStarted: "اشترك الآن",
     },
     hero: {

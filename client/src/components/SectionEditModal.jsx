@@ -1,15 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useContent } from '../context/ContentContext';
+import { defaultContent } from '../context/defaultContent';
 import { IconClose, IconCheck, IconZap } from './Icons';
 
 export const SectionEditModal = () => {
-  const { content, updateSection, activeEditingSection, setActiveEditingSection, showConfirm } = useContent();
+  const { content, updateSection, activeEditingSection, setActiveEditingSection, showConfirm, saveToServer } = useContent();
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
     if (activeEditingSection) {
       if (activeEditingSection.key === 'downloadApps_hero' || activeEditingSection.key === 'downloadApps_categories') {
-        setFormData(JSON.parse(JSON.stringify(content.downloadApps || {})));
+        const defDl = defaultContent.downloadApps || {};
+        const curDl = content.downloadApps || {};
+        const baseDownloadApps = {
+          ...defDl,
+          ...curDl,
+          hero: {
+            ...(defDl.hero || {}),
+            ...(curDl.hero || {}),
+          },
+          featuredProduct: {
+            ...(defDl.featuredProduct || {}),
+            ...(curDl.featuredProduct || {}),
+          },
+          easyInstall: {
+            ...(defDl.easyInstall || {}),
+            ...(curDl.easyInstall || {}),
+          },
+        };
+        setFormData(JSON.parse(JSON.stringify(baseDownloadApps)));
       } else if (content[activeEditingSection.key]) {
         // Deep clone section data into local form state
         setFormData(JSON.parse(JSON.stringify(content[activeEditingSection.key])));
@@ -416,8 +435,26 @@ export const SectionEditModal = () => {
     e.preventDefault();
     if (sectionKey === 'downloadApps_hero' || sectionKey === 'downloadApps_categories') {
       updateSection('downloadApps', formData);
+      if (saveToServer) {
+        saveToServer({
+          ...(content || {}),
+          downloadApps: {
+            ...((content && content.downloadApps) || {}),
+            ...formData,
+          },
+        }).catch(() => {});
+      }
     } else {
       updateSection(sectionKey, formData);
+      if (saveToServer) {
+        saveToServer({
+          ...(content || {}),
+          [sectionKey]: {
+            ...((content && content[sectionKey]) || {}),
+            ...formData,
+          },
+        }).catch(() => {});
+      }
     }
     setActiveEditingSection(null);
   };
@@ -549,6 +586,30 @@ export const SectionEditModal = () => {
                   value={formData.btnGetStarted || ''} 
                   onChange={(e) => handleFieldChange('btnGetStarted', e.target.value)} 
                 />
+              </div>
+
+              <h4 className="editor-card-title">🎁 Bouton Test Gratuit 24h (WhatsApp)</h4>
+              <div className="grid-2-cols">
+                <div className="form-group">
+                  <label className="form-label">Texte du bouton :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.btnFreeTrial || ''} 
+                    onChange={(e) => handleFieldChange('btnFreeTrial', e.target.value)} 
+                    placeholder="Test Gratuit 24h"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Message WhatsApp pré-rempli :</label>
+                  <input 
+                    type="text" 
+                    className="form-input-control" 
+                    value={formData.freeTrialWhatsappMsg || ''} 
+                    onChange={(e) => handleFieldChange('freeTrialWhatsappMsg', e.target.value)} 
+                    placeholder="Bonjour SatProMax, je souhaite demander un test gratuit de 24 heures..."
+                  />
+                </div>
               </div>
             </div>
           )}

@@ -5,6 +5,7 @@ export const fr = {
       linkInstall: "Guide d'Installation",
       linkApps: "Télécharger Apps",
       linkContact: "Contact",
+      btnFreeTrial: "Test Gratuit 24h",
       btnGetStarted: "COMMENCER",
     },
     hero: {
@@ -555,7 +556,7 @@ export const fr = {
       whatsappLabel: "Numéro WhatsApp (optionnel pour support VIP rapide) :",
       whatsappPlaceholder: "+33 6 00 00 00 00",
       deviceLabel: "Appareil principal que vous allez utiliser :",
-      paymentLabel: "Sélectionnez votre moyen de paiement :",
+      paymentLabel: "Mode de paiement *",
       payCard: "💳 Carte Bancaire (Visa / Mastercard)",
       payPaypal: "🅿️ PayPal",
       payCrypto: "₿ Crypto (USDT / BTC)",
